@@ -1,34 +1,25 @@
 package com.example.demo.service.impl;
 
-import java.util.List;
 import org.springframework.stereotype.Service;
+import java.util.List;
 import com.example.demo.entity.AlertLog;
-import com.example.demo.repository.*;
+import com.example.demo.repository.AlertLogRepository;
 import com.example.demo.service.AlertLogService;
 
 @Service
 public class AlertLogServiceImpl implements AlertLogService {
-
     private final AlertLogRepository repo;
-    private final WarrantyRepository warrantyRepo;
-
-    public AlertLogServiceImpl(AlertLogRepository repo,
-                               WarrantyRepository warrantyRepo) {
-        this.repo = repo;
-        this.warrantyRepo = warrantyRepo;
-    }
+    public AlertLogServiceImpl(AlertLogRepository repo){ this.repo = repo; }
 
     @Override
-    public AlertLog addLog(Long warrantyId, String message) {
-        AlertLog log = AlertLog.builder()
-                .warranty(warrantyRepo.findById(warrantyId).orElseThrow())
-                .message(message)
-                .build();
-        return repo.save(log);
-    }
+    public AlertLog saveAlert(AlertLog log){ return repo.save(log); }
 
     @Override
-    public List<AlertLog> getLogs(Long warrantyId) {
-        return repo.findByWarrantyId(warrantyId);
-    }
+    public List<AlertLog> getAllAlerts(){ return repo.findAll(); }
+
+    @Override
+    public AlertLog getAlertById(Long id){ return repo.findById(id).orElseThrow(() -> new RuntimeException("Alert not found")); }
+
+    @Override
+    public void deleteAlert(Long id){ repo.deleteById(id); }
 }

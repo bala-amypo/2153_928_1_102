@@ -1,28 +1,28 @@
 package com.example.demo.controller;
 
-import java.util.List;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 import com.example.demo.entity.AlertSchedule;
 import com.example.demo.service.AlertScheduleService;
 
 @RestController
 @RequestMapping("/schedules")
 public class AlertScheduleController {
-
     private final AlertScheduleService service;
+    public AlertScheduleController(AlertScheduleService service){ this.service = service; }
 
-    public AlertScheduleController(AlertScheduleService service) {
-        this.service = service;
-    }
+    @PostMapping("/add")
+    public AlertSchedule addSchedule(@RequestBody AlertSchedule s){ return service.saveSchedule(s); }
 
-    @PostMapping("/{warrantyId}")
-    public AlertSchedule create(@PathVariable Long warrantyId,
-                                @RequestBody AlertSchedule schedule) {
-        return service.createSchedule(warrantyId, schedule);
-    }
+    @GetMapping("/all")
+    public List<AlertSchedule> getSchedules(){ return service.getAllSchedules(); }
 
-    @GetMapping("/{warrantyId}")
-    public List<AlertSchedule> list(@PathVariable Long warrantyId) {
-        return service.getSchedules(warrantyId);
+    @GetMapping("/{id}")
+    public AlertSchedule getSchedule(@PathVariable Long id){ return service.getScheduleById(id); }
+
+    @DeleteMapping("/{id}")
+    public String deleteSchedule(@PathVariable Long id){
+        service.deleteSchedule(id);
+        return "Deleted successfully";
     }
 }

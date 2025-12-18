@@ -2,15 +2,16 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "alert_schedules")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class AlertSchedule {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,6 +19,6 @@ public class AlertSchedule {
     @ManyToOne
     private Warranty warranty;
 
-    private Integer daysBeforeExpiry;
-    private Boolean enabled;
+    private LocalDateTime alertTime;
+    private String alertMessage;
 }

@@ -1,9 +1,11 @@
 package com.example.demo.service;
 
-import java.util.List;
 import com.example.demo.entity.AlertSchedule;
+import java.util.List;
 
 public interface AlertScheduleService {
-    AlertSchedule createSchedule(Long warrantyId, AlertSchedule schedule);
-    List<AlertSchedule> getSchedules(Long warrantyId);
+    AlertSchedule saveSchedule(AlertSchedule s);
+    List<AlertSchedule> getAllSchedules();
+    AlertSchedule getScheduleById(Long id);
+    void deleteSchedule(Long id);
 }
