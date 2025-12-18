@@ -1,27 +1,28 @@
 package com.example.demo.controller;
 
-import java.util.List;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 import com.example.demo.entity.Product;
 import com.example.demo.service.ProductService;
 
 @RestController
 @RequestMapping("/products")
 public class ProductController {
+    private final ProductService productService;
+    public ProductController(ProductService productService){ this.productService = productService; }
 
-    private final ProductService service;
+    @PostMapping("/add")
+    public Product addProduct(@RequestBody Product p){ return productService.saveProduct(p); }
 
-    public ProductController(ProductService service) {
-        this.service = service;
-    }
+    @GetMapping("/all")
+    public List<Product> getProducts(){ return productService.getAllProducts(); }
 
-    @PostMapping
-    public Product add(@RequestBody Product product) {
-        return service.addProduct(product);
-    }
+    @GetMapping("/{id}")
+    public Product getProduct(@PathVariable Long id){ return productService.getProductById(id); }
 
-    @GetMapping
-    public List<Product> list() {
-        return service.getAllProducts();
+    @DeleteMapping("/{id}")
+    public String deleteProduct(@PathVariable Long id){
+        productService.deleteProduct(id);
+        return "Deleted successfully";
     }
 }

@@ -1,10 +1,11 @@
 package com.example.demo.service;
 
-import java.util.List;
 import com.example.demo.entity.Warranty;
+import java.util.List;
 
 public interface WarrantyService {
-    Warranty registerWarranty(Long userId, Long productId, Warranty warranty);
-    Warranty getWarranty(Long warrantyId);
-    List<Warranty> getUserWarranties(Long userId);
+    Warranty saveWarranty(Warranty warranty);
+    List<Warranty> getAllWarranties();
+    Warranty getWarrantyById(Long id);
+    void deleteWarranty(Long id);
 }

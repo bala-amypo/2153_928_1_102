@@ -1,57 +1,28 @@
 package com.example.demo.controller;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import com.example.demo.dto.*;
+import java.util.List;
 import com.example.demo.entity.User;
-import com.example.demo.security.JwtTokenProvider;
 import com.example.demo.service.UserService;
 
 @RestController
-@RequestMapping("/auth")
-public class AuthController {
-
+@RequestMapping("/users")
+public class UserController {
     private final UserService userService;
-    private final AuthenticationManager authenticationManager;
-    private final JwtTokenProvider jwtTokenProvider;
+    public UserController(UserService userService){ this.userService = userService; }
 
-    public AuthController(UserService userService,
-                          AuthenticationManager authenticationManager,
-                          JwtTokenProvider jwtTokenProvider) {
-        this.userService = userService;
-        this.authenticationManager = authenticationManager;
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
+    @PostMapping("/add")
+    public User addUser(@RequestBody User user){ return userService.saveUser(user); }
 
-    @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody RegisterRequest request) {
+    @GetMapping("/all")
+    public List<User> getUsers(){ return userService.getAllUsers(); }
 
-        User user = User.builder()
-                .name(request.getName())
-                .email(request.getEmail())
-                .password(request.getPassword())
-                .build();
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable Long id){ return userService.getUserById(id); }
 
-        return ResponseEntity.ok(userService.register(user));
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
-
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
-
-        User user = userService.findByEmail(request.getEmail());
-        String token = jwtTokenProvider.generateToken(user);
-
-        return ResponseEntity.ok(new AuthResponse(token));
+    @DeleteMapping("/{id}")
+    public String deleteUser(@PathVariable Long id){
+        userService.deleteUser(id);
+        return "Deleted successfully";
     }
 }
