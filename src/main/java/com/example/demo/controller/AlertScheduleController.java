@@ -17,12 +17,7 @@ public class AlertScheduleController {
     @GetMapping("/all")
     public List<AlertSchedule> getSchedules(){ return service.getAllSchedules(); }
 
-    @GetMapping("/{id}")
-    public AlertSchedule getSchedule(@PathVariable Long id){ return service.getScheduleById(id); }
+   
 
-    @DeleteMapping("/{id}")
-    public String deleteSchedule(@PathVariable Long id){
-        service.deleteSchedule(id);
-        return "Deleted successfully";
-    }
+    
 }

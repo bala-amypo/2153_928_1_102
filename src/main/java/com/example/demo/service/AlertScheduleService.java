@@ -6,6 +6,5 @@ import java.util.List;
 public interface AlertScheduleService {
     AlertSchedule saveSchedule(AlertSchedule s);
     List<AlertSchedule> getAllSchedules();
-    AlertSchedule getScheduleById(Long id);
-    void deleteSchedule(Long id);
+    
 }

@@ -17,9 +17,5 @@ public class AlertScheduleServiceImpl implements AlertScheduleService {
     @Override
     public List<AlertSchedule> getAllSchedules(){ return repo.findAll(); }
 
-    @Override
-    public AlertSchedule getScheduleById(Long id){ return repo.findById(id).orElseThrow(() -> new RuntimeException("Schedule not found")); }
-
-    @Override
-    public void deleteSchedule(Long id){ repo.deleteById(id); }
+    
 }
