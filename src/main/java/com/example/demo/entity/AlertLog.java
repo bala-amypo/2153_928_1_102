@@ -22,7 +22,6 @@ public class AlertLog {
     private Long id;
 
     @NotBlank(message = "Message cannot be empty")
-    @Size(max = 200, message = "Message must be less than 200 characters")
     @Schema(description = "Alert message", example = "CPU usage high")
     private String message;
 
