@@ -13,15 +13,20 @@ public class AuthController {
         this.userService = userService; 
     }
 
-    @PostMapping("/register")
+    @PostMapping("/")
     public User register(@RequestBody User user){ 
         return userService.register(user); 
         }
 
-        @PostMapping("/login")
-    public User login(@RequestBody User user){ 
-        return userService.login(user); 
-        }
+    @GetMapping("/all")
+    public List<User> getUsers(){ return userService.getAllUsers(); }
 
-   
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable Long id){ return userService.getUserById(id); }
+
+    @DeleteMapping("/{id}")
+    public String deleteUser(@PathVariable Long id){
+        userService.deleteUser(id);
+        return "Deleted successfully";
+    }
 }

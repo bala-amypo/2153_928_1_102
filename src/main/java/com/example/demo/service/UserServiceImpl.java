@@ -19,14 +19,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User login(String email, String password) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Invalid email"));
+    public List<User> getAllUsers(){ return userRepository.findAll(); }
 
-        if (!user.getPassword().equals(password)) {
-            throw new RuntimeException("Invalid password");
-        }
+    @Override
+    public User getUserById(Long id){ return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found")); }
 
-        return user;
-    }
+    @Override
+    public void deleteUser(Long id){ userRepository.deleteById(id); }
 }
