@@ -27,13 +27,13 @@ public class AlertLog {
     private String message;
 
     @Schema(description = "Creation timestamp", example = "2025-12-19T14:30:00")
-    private LocalDateTime createdAt;
+    private LocalDateTime SendAt;
 
     // Automatically set createdAt before saving
     @PrePersist
     protected void onCreate() {
-        if (this.createdAt == null) {
-            this.createdAt = LocalDateTime.now();
+        if (this.SendAt == null) {
+            this.SendAt = LocalDateTime.now();
         }
     }
 }
