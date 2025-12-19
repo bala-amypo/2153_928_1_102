@@ -12,7 +12,7 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(UserRepository userRepository){ this.userRepository = userRepository; }
 
     @Override
-    public User saveUser(User user){
+    public User register(User user){
         if(userRepository.existsByEmail(user.getEmail()))
             throw new RuntimeException("Email exists");
         return userRepository.save(user);

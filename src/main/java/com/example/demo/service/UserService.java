@@ -5,7 +5,5 @@ import java.util.List;
 
 public interface UserService {
     User register(User user);
-    List<User> getAllUsers();
-    User getUserById(Long id);
-    void deleteUser(Long id);
+    User login(User user);
 }
