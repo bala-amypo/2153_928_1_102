@@ -20,10 +20,6 @@ public class WarrantyController {
     @GetMapping("/{id}")
     public Warranty getWarranty(@PathVariable Long id){ return service.getWarrantyById(id); }
 
-    @DeleteMapping("/{id}")
-    public String deleteWarranty(@PathVariable Long id){
-        service.deleteWarranty(id);
-        return "Deleted successfully";
-    }
+    
 }
 

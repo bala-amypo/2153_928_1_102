@@ -20,6 +20,5 @@ public class WarrantyServiceImpl implements WarrantyService {
     @Override
     public Warranty getWarrantyById(Long id){ return repo.findById(id).orElseThrow(() -> new RuntimeException("Warranty not found")); }
 
-    @Override
-    public void deleteWarranty(Long id){ repo.deleteById(id); }
+    
 }
