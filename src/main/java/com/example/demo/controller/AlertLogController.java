@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
-public class AlertLog {
+public class AlertLogController {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
