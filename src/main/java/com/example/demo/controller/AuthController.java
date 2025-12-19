@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
@@ -21,13 +22,13 @@ public class AuthController {
 
     // Register a new user
     @PostMapping("/register")
-    public User register(@RequestBody User user){
+    public User register(@Valid @RequestBody User user){
         return userService.saveUser(user);
     }
 
     // Login
     @PostMapping("/login")
-    public String login(@RequestBody User user){
+    public String login(@Valid @RequestBody User user){
         User u = userService.login(user.getEmail(), user.getPassword());
         if(u == null){
             return "Invalid credentials";
