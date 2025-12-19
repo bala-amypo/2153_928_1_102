@@ -10,7 +10,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    // Constructor Injection (MANDATORY)
+    // ✅ Constructor injection (MANDATORY for tests)
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -22,10 +22,8 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("email already exists");
         }
 
-        if (user.getRole() == null) {
-            user.setRole("USER");
-        }
-
+        user.setId(null);               // 🔥 IMPORTANT
+        user.setRole("USER");           // 🔥 Default role
         return userRepository.save(user);
     }
 
