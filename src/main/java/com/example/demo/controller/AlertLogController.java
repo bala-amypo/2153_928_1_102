@@ -1,22 +1,22 @@
-package com.example.demo.controller;
+package com.example.demo.entity;
 
-import org.springframework.web.bind.annotation.*;
-import java.util.List;
-import com.example.demo.entity.AlertLog;
-import com.example.demo.service.AlertLogService;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
-@RestController
-@RequestMapping("/alerts")
-public class AlertLogController {
-    private final AlertLogService service;
-    public AlertLogController(AlertLogService service){ this.service = service; }
+@Entity
+public class AlertLog {
 
-    @PostMapping("/add")
-    public AlertLog addAlert(@RequestBody AlertLog log){ return service.saveAlert(log); }
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @GetMapping("/all")
-    public List<AlertLog> getAlerts(){ return service.getAllAlerts(); }
+    @NotNull(message = "Alert time is required")
+    private LocalDateTime alertTime;
 
-    
-    
+    @NotBlank(message = "Alert message cannot be empty")
+    private String alertMessage;
+
+    // getters and setters
 }
