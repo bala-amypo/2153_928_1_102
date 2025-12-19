@@ -17,9 +17,5 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> getAllProducts(){ return repo.findAll(); }
 
-    @Override
-    public Product getProductById(Long id){ return repo.findById(id).orElseThrow(() -> new RuntimeException("Product not found")); }
-
-    @Override
-    public void deleteProduct(Long id){ repo.deleteById(id); }
+    
 }
