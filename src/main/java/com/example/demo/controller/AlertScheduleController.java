@@ -1,23 +1,28 @@
 package com.example.demo.controller;
 
-import org.springframework.web.bind.annotation.*;
-import java.util.List;
 import com.example.demo.entity.AlertSchedule;
 import com.example.demo.service.AlertScheduleService;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/schedules")
 public class AlertScheduleController {
+
     private final AlertScheduleService service;
-    public AlertScheduleController(AlertScheduleService service){ this.service = service; }
+
+    public AlertScheduleController(AlertScheduleService service) {
+        this.service = service;
+    }
 
     @PostMapping("/add")
-    public AlertSchedule addSchedule(@RequestBody AlertSchedule s){ return service.saveSchedule(s); }
+    public AlertSchedule addSchedule(@Valid @RequestBody AlertSchedule schedule) {
+        return service.saveSchedule(schedule);
+    }
 
     @GetMapping("/all")
-    public List<AlertSchedule> getSchedules(){ return service.getAllSchedules(); }
-
-   
-
-    
+    public List<AlertSchedule> getSchedules() {
+        return service.getAllSchedules();
+    }
 }
