@@ -17,12 +17,6 @@ public class AlertLogController {
     @GetMapping("/all")
     public List<AlertLog> getAlerts(){ return service.getAllAlerts(); }
 
-    @GetMapping("/{id}")
-    public AlertLog getAlert(@PathVariable Long id){ return service.getAlertById(id); }
-
-    @DeleteMapping("/{id}")
-    public String deleteAlert(@PathVariable Long id){
-        service.deleteAlert(id);
-        return "Deleted successfully";
-    }
+    
+    
 }

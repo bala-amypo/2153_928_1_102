@@ -17,9 +17,5 @@ public class AlertLogServiceImpl implements AlertLogService {
     @Override
     public List<AlertLog> getAllAlerts(){ return repo.findAll(); }
 
-    @Override
-    public AlertLog getAlertById(Long id){ return repo.findById(id).orElseThrow(() -> new RuntimeException("Alert not found")); }
-
-    @Override
-    public void deleteAlert(Long id){ repo.deleteById(id); }
+   
 }

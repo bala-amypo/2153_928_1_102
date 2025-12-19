@@ -6,6 +6,5 @@ import java.util.List;
 public interface AlertLogService {
     AlertLog saveAlert(AlertLog log);
     List<AlertLog> getAllAlerts();
-    AlertLog getAlertById(Long id);
-    void deleteAlert(Long id);
+    
 }
