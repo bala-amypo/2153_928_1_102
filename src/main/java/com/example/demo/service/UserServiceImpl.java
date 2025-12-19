@@ -1,6 +1,9 @@
 package com.example.demo.service.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
+
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
@@ -21,8 +24,9 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("email already exists");
         }
 
-        user.setId(null);
-        user.setRole("USER");
+        if (user.getRole() == null || user.getRole().isBlank()) {
+            user.setRole("USER"); // default role
+        }
 
         return userRepository.save(user);
     }
@@ -38,5 +42,10 @@ public class UserServiceImpl implements UserService {
         }
 
         return user;
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 }
