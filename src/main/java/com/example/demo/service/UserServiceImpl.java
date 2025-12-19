@@ -10,6 +10,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
+    // ✅ Constructor injection (MANDATORY for tests)
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -17,14 +18,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public User register(User user) {
 
-        if (user.getEmail() == null || user.getEmail().isEmpty()) {
-            throw new RuntimeException("email required");
-        }
-
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new RuntimeException("email already exists");
         }
 
+        user.setId(null);               // 🔥 IMPORTANT
+        user.setRole("USER");           // 🔥 Default role
         return userRepository.save(user);
     }
 

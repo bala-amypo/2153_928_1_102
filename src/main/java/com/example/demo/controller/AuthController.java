@@ -16,8 +16,11 @@ public class AuthController {
 
     @PostMapping("/register")
     public User register(@RequestBody User user) {
-        user.setId(null);              // IMPORTANT
-        user.setRole("USER");          // DEFAULT ROLE
         return userService.register(user);
+    }
+
+    @PostMapping("/login")
+    public User login(@RequestBody User user) {
+        return userService.findByEmail(user.getEmail());
     }
 }
