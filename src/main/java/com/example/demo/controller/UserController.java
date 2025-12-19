@@ -9,14 +9,10 @@ import com.example.demo.service.UserService;
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
-    public UserController(UserService userService){ 
-        this.userService = userService; 
-    }
+    public UserController(UserService userService){ this.userService = userService; }
 
-    @PostMapping("/id")
-    public User save(@RequestBody User user){ 
-        return userService.Savadata(user); 
-        }
+    @PostMapping("/add")
+    public User addUser(@RequestBody User user){ return userService.saveUser(user); }
 
     @GetMapping("/all")
     public List<User> getUsers(){ return userService.getAllUsers(); }
