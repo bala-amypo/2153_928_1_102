@@ -10,7 +10,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    // ✅ Constructor injection (MANDATORY for tests)
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -22,14 +21,22 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("email already exists");
         }
 
-        user.setId(null);               // 🔥 IMPORTANT
-        user.setRole("USER");           // 🔥 Default role
+        user.setId(null);
+        user.setRole("USER");
+
         return userRepository.save(user);
     }
 
     @Override
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public User login(String email, String password) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Invalid email"));
+
+        if (!user.getPassword().equals(password)) {
+            throw new RuntimeException("Invalid password");
+        }
+
+        return user;
     }
 }
