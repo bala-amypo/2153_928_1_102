@@ -2,6 +2,7 @@ package com.example.demo.service.impl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.User;
@@ -11,37 +12,25 @@ import com.example.demo.service.UserService;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository repo;
+    private final UserRepository userRepository;
 
-    public UserServiceImpl(UserRepository repo) {
-        this.repo = repo;
+    @Autowired
+    public UserServiceImpl(UserRepository userRepository){
+        this.userRepository = userRepository;
     }
 
     @Override
-    public User register(User user) {
-
-        if (repo.findByEmail(user.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already exists");
-        }
-
-        return repo.save(user);
+    public User saveUser(User user){
+        return userRepository.save(user);
     }
 
     @Override
-    public User login(String email, String password) {
-
-        User user = repo.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        if (!user.getPassword().equals(password)) {
-            throw new RuntimeException("Invalid password");
-        }
-
-        return user;
+    public User login(String email, String password){
+        return userRepository.findByEmailAndPassword(email, password);
     }
 
     @Override
-    public List<User> getAllUsers() {
-        return repo.findAll();
+    public List<User> getAllUsers(){
+        return userRepository.findAll();
     }
 }

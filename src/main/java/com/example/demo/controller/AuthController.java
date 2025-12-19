@@ -1,8 +1,8 @@
 package com.example.demo.controller;
 
 import java.util.List;
-import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.entity.User;
@@ -12,24 +12,32 @@ import com.example.demo.service.UserService;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final UserService service;
+    private final UserService userService;
 
-    public AuthController(UserService service) {
-        this.service = service;
+    @Autowired
+    public AuthController(UserService userService){
+        this.userService = userService;
     }
 
+    // Register a new user
     @PostMapping("/register")
-    public User register(@RequestBody User user) {
-        return service.register(user);
+    public User register(@RequestBody User user){
+        return userService.saveUser(user);
     }
 
+    // Login
     @PostMapping("/login")
-    public User login(@RequestBody Map<String, String> data) {
-        return service.login(data.get("email"), data.get("password"));
+    public String login(@RequestBody User user){
+        User u = userService.login(user.getEmail(), user.getPassword());
+        if(u == null){
+            return "Invalid credentials";
+        }
+        return "Login successful";
     }
 
+    // Get all users
     @GetMapping("/all")
-    public List<User> getAll() {
-        return service.getAllUsers();
+    public List<User> getAllUsers(){
+        return userService.getAllUsers();
     }
 }
