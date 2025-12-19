@@ -1,22 +1,30 @@
-package com.example.demo.controller;
+package com.example.demo.entity;
 
-import org.springframework.web.bind.annotation.*;
-import java.util.List;
-import com.example.demo.entity.AlertLog;
-import com.example.demo.service.AlertLogService;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
-@RestController
-@RequestMapping("/alerts")
+@Entity
 public class AlertLogController {
-    private final AlertLogService service;
-    public AlertLogController(AlertLogService service){ this.service = service; }
 
-    @PostMapping("/add")
-    public AlertLog addAlert(@RequestBody AlertLog log){ return service.saveAlert(log); }
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @GetMapping("/all")
-    public List<AlertLog> getAlerts(){ return service.getAllAlerts(); }
+    @NotBlank(message = "Message cannot be empty")
+    @Size(max = 200, message = "Message must be less than 200 characters")
+    private String message;
 
-    
-    
+    @NotBlank(message = "Level is required")
+    private String level;
+
+    // getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
+
+    public String getLevel() { return level; }
+    public void setLevel(String level) { this.level = level; }
 }
