@@ -4,6 +4,7 @@ import com.example.demo.entity.AlertSchedule;
 import com.example.demo.service.AlertScheduleService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -16,11 +17,13 @@ public class AlertScheduleController {
         this.service = service;
     }
 
+    // Add a new alert schedule
     @PostMapping("/add")
     public AlertSchedule addSchedule(@Valid @RequestBody AlertSchedule schedule) {
         return service.saveSchedule(schedule);
     }
 
+    // Get all alert schedules
     @GetMapping("/all")
     public List<AlertSchedule> getSchedules() {
         return service.getAllSchedules();
