@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 @Entity
-@Table(name = "users")
+@Table(name = "User")
 @Getter
 @Setter
 @NoArgsConstructor
