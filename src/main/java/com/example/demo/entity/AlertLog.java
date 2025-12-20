@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Entity
-@Table(name = "Alert_Logs")
+@Table(name = "alert_logs")
 @Getter
 @Setter
 @NoArgsConstructor
