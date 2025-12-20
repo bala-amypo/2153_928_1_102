@@ -1,14 +1,12 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "Alert_Schedules")
+@Table(name = "alert_schedules")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,19 +16,16 @@ public class AlertSchedule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Schema(description = "Unique ID of the schedule", example = "1")
     private Long id;
 
     @ManyToOne
     @NotNull(message = "Warranty must be provided")
-    @Schema(description = "Associated warranty object")
     private Warranty warranty;
 
-    @NotNull(message = "Alert time is required")
-    @Schema(description = "Time of the alert", example = "2025-12-20T09:00:00")
-    private LocalDateTime alertTime;
+    @NotNull(message = "Days before expiry is required")
+    @Min(value = 0, message = "Days before expiry must be 0 or greater")
+    private Integer daysBeforeExpiry;
 
-    @NotBlank(message = "Alert message cannot be empty")
-    @Schema(description = "Message for the alert", example = "Warranty expiring soon")
-    private String alertMessage;
+    @NotNull(message = "Enabled flag is required")
+    private Boolean enabled;
 }
