@@ -12,7 +12,7 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    // 🔹 Bean Validation (@NotNull, @Size, etc.)
+    // Handles validation errors
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
@@ -25,21 +25,5 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
-    // 🔹 Duplicate Email
-    @ExceptionHandler(DuplicateEmailException.class)
-    public ResponseEntity<String> handleDuplicateEmail(DuplicateEmailException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-
-    // 🔹 Duplicate Serial Number
-    @ExceptionHandler(DuplicateSerialNumberException.class)
-    public ResponseEntity<String> handleDuplicateSerial(DuplicateSerialNumberException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-
-    // 🔹 Invalid Expiry Date
-    @ExceptionHandler(InvalidExpiryDateException.class)
-    public ResponseEntity<String> handleInvalidExpiry(InvalidExpiryDateException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
-    }
+    // You can add other exception handlers here
 }
