@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -22,6 +23,7 @@ public class AlertLog {
     // Each log belongs to a warranty
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "warranty_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Warranty warranty;
 
     // Log message
