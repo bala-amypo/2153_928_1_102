@@ -26,16 +26,16 @@ public class AlertLog {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Warranty warranty;
 
-    // Log message
+    
     @NotBlank(message = "Message cannot be empty")
     @Column(nullable = false)
     private String message;
 
-    // Auto-generated timestamp
+    
     @Column(name = "sent_at", nullable = false)
     private LocalDateTime sentAt;
 
-    // Auto-set timestamp
+    
     @PrePersist
     protected void onCreate() {
         this.sentAt = LocalDateTime.now();

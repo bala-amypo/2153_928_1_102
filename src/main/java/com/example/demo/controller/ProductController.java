@@ -17,13 +17,13 @@ public class ProductController {
         this.productService = productService;
     }
 
-    // POST /products
+    
     @PostMapping
     public Product addProduct(@Valid @RequestBody Product product) {
         return productService.saveProduct(product);
     }
 
-    // GET /products
+   
     @GetMapping
     public List<Product> getProducts() {
         return productService.getAllProducts();

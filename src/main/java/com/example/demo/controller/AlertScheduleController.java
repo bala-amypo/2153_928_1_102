@@ -17,7 +17,7 @@ public class AlertScheduleController {
         this.service = service;
     }
 
-    // Create alert schedule for a warranty
+    
     @PostMapping("/{warrantyId}")
     public AlertSchedule createSchedule(
             @PathVariable Long warrantyId,
@@ -25,7 +25,7 @@ public class AlertScheduleController {
         return service.createSchedule(warrantyId, schedule);
     }
 
-    // Get alert schedules by warrantyId
+    
     @GetMapping("/{warrantyId}")
     public List<AlertSchedule> getSchedules(@PathVariable Long warrantyId) {
         return service.getSchedules(warrantyId);

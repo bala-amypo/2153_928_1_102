@@ -19,20 +19,19 @@ public class AuthController {
         this.userService = userService;
     }
 
-    // Register
+    
     @PostMapping("/register")
     public User register(@RequestBody User user) {
         return userService.register(user);
     }
 
-    // Login
+    
     @PostMapping("/login")
     public String login(@RequestBody User user) {
 
         User dbUser = userService.findByEmail(user.getEmail());
 
-        if (dbUser == null ||
-            !passwordEncoder.matches(user.getPassword(), dbUser.getPassword())) {
+        if (dbUser == null || !passwordEncoder.matches(user.getPassword(), dbUser.getPassword())) {
             return "Invalid credentials";
         }
 
