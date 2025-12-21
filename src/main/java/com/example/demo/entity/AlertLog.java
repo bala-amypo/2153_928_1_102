@@ -20,7 +20,7 @@ public class AlertLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Each log belongs to a warranty
+    
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "warranty_id", nullable = false)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})

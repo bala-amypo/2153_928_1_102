@@ -19,18 +19,15 @@ public class WarrantyServiceImpl implements WarrantyService {
     @Override
     public Warranty registerWarranty(Warranty warranty) {
 
-        // Rule: Expiry date must be after purchase date
+        //Expiry date must be after purchase date
         if (warranty.getExpiryDate().isBefore(warranty.getPurchaseDate())) {
             throw new RuntimeException(
-                "Expiry date must be after purchase date"
-            );
+                "Expiry date must be after purchase date");
         }
 
-        // Rule: Serial number must be unique
+        // Serial number must be unique
         if (repo.existsBySerialNumber(warranty.getSerialNumber())) {
-            throw new RuntimeException(
-                "Serial number must be unique"
-            );
+            throw new RuntimeException("Serial number must be unique");
         }
 
         return repo.save(warranty);
