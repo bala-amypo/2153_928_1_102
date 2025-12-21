@@ -21,8 +21,7 @@ public class WarrantyServiceImpl implements WarrantyService {
 
         //Expiry date must be after purchase date
         if (warranty.getExpiryDate().isBefore(warranty.getPurchaseDate())) {
-            throw new RuntimeException(
-                "Expiry date must be after purchase date");
+            throw new RuntimeException("Expiry date must be after purchase date");
         }
 
         // Serial number must be unique
@@ -35,8 +34,7 @@ public class WarrantyServiceImpl implements WarrantyService {
 
     @Override
     public Warranty getWarrantyById(Long id) {
-        return repo.findById(id)
-                .orElseThrow(() ->
+        return repo.findById(id).orElseThrow(() ->
                         new RuntimeException("Warranty not found"));
     }
 
