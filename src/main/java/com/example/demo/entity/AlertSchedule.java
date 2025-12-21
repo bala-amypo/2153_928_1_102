@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "alert_schedules")
 @Getter
@@ -18,7 +20,7 @@ public class AlertSchedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // ManyToOne relationship with Warranty, join column explicitly named
+    // ManyToOne relationship with Warranty
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "warranty_id", nullable = false)
     @NotNull(message = "Warranty must be provided")
@@ -30,8 +32,29 @@ public class AlertSchedule {
     @Column(name = "days_before_expiry", nullable = false)
     private Integer daysBeforeExpiry;
 
-    // Enabled flag for toggling alerts
+    // Enabled flag
     @NotNull(message = "Enabled flag is required")
     @Column(nullable = false)
     private Boolean enabled;
+
+    // 🔹 AUTO-FILLED ALERT MESSAGE
+    @Column(name = "alert_message", nullable = false)
+    private String alertMessage;
+
+    // 🔹 AUTO-FILLED ALERT TIME
+    @Column(name = "alert_time", nullable = false)
+    private LocalDateTime alertTime;
+
+    // 🔹 AUTO SET BEFORE INSERT
+    @PrePersist
+    public void setDefaults() {
+
+        if (alertTime == null) {
+            alertTime = LocalDateTime.now();
+        }
+
+        if (alertMessage == null || alertMessage.isBlank()) {
+            alertMessage = "Warranty expiring soon";
+        }
+    }
 }
