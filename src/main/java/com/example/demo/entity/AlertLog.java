@@ -2,10 +2,9 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.*;
+
 import java.time.LocalDateTime;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @Entity
 @Table(name = "alert_logs")
@@ -18,21 +17,25 @@ public class AlertLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Schema(description = "Unique ID of the alert", example = "1")
     private Long id;
 
+    // Each log belongs to a warranty
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "warranty_id", nullable = false)
+    private Warranty warranty;
+
+    // Log message
     @NotBlank(message = "Message cannot be empty")
-    @Schema(description = "Alert message", example = "CPU usage high")
+    @Column(nullable = false)
     private String message;
 
-    @Schema(description = "Creation timestamp", example = "2025-12-19T14:30:00")
-    private LocalDateTime SendAt;
+    // Auto-generated timestamp
+    @Column(name = "sent_at", nullable = false)
+    private LocalDateTime sentAt;
 
-    // Automatically set createdAt before saving
+    // Auto-set timestamp
     @PrePersist
     protected void onCreate() {
-        if (this.SendAt == null) {
-            this.SendAt = LocalDateTime.now();
-        }
+        this.sentAt = LocalDateTime.now();
     }
 }
