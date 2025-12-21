@@ -1,44 +1,41 @@
 package com.example.demo.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
     private final UserService userService;
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Autowired
-    public AuthController(UserService userService){
+    public AuthController(UserService userService) {
         this.userService = userService;
     }
 
-    // Register a new user
+    // Register
     @PostMapping("/register")
-    public User register(@Valid @RequestBody User user){
-        return userService.saveUser(user);
+    public User register(@RequestBody User user) {
+        return userService.register(user);
     }
 
     // Login
     @PostMapping("/login")
-    public String login(@Valid @RequestBody User user){
-        User u = userService.login(user.getEmail(), user.getPassword());
-        if(u == null){
+    public String login(@RequestBody User user) {
+
+        User dbUser = userService.findByEmail(user.getEmail());
+
+        if (dbUser == null ||
+            !passwordEncoder.matches(user.getPassword(), dbUser.getPassword())) {
             return "Invalid credentials";
         }
-        return "Login successful";
-    }
 
-    // Get all users
-    @GetMapping("/all")
-    public List<User> getAllUsers(){
-        return userService.getAllUsers();
+        return "Login successful";
     }
 }
