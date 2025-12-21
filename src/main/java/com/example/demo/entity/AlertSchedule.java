@@ -5,8 +5,6 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "alert_schedules")
 @Getter
@@ -20,24 +18,20 @@ public class AlertSchedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // ManyToOne relationship with Warranty
+    // Many-to-One with Warranty
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "warranty_id", nullable = false)
-    @NotNull(message = "Warranty must be provided")
+    @NotNull
     private Warranty warranty;
 
-    // Ensure daysBeforeExpiry is not negative
-    @NotNull(message = "Days before expiry is required")
-    @Min(value = 0, message = "Days before expiry must be 0 or greater")
-    @Column(name = "days_before_expiry", nullable = false)
+    // daysBeforeExpiry >= 0
+    @NotNull
+    @Min(0)
+    @Column(nullable = false)
     private Integer daysBeforeExpiry;
 
-    // Enabled flag
-    @NotNull(message = "Enabled flag is required")
+    // Enable / Disable alerts
+    @NotNull
     @Column(nullable = false)
     private Boolean enabled;
-
-   
-
-    
 }
