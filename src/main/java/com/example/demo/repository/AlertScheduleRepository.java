@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface AlertScheduleRepository extends JpaRepository<AlertSchedule, Long> {
 
-    // REQUIRED by question
+    
     List<AlertSchedule> findByWarrantyId(Long warrantyId);
 }
