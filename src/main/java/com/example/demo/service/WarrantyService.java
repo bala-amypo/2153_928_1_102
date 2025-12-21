@@ -4,8 +4,10 @@ import com.example.demo.entity.Warranty;
 import java.util.List;
 
 public interface WarrantyService {
-    Warranty saveWarranty(Warranty warranty);
-    List<Warranty> getAllWarranties();
+
+    Warranty registerWarranty(Warranty warranty);
+
     Warranty getWarrantyById(Long id);
-   
+
+    List<Warranty> getWarrantiesByUser(Long userId);
 }
