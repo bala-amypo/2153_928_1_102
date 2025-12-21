@@ -20,49 +20,41 @@ public class AlertSchedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // ManyToOne relationship with Warranty
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "warranty_id", nullable = false)
     @NotNull(message = "Warranty must be provided")
     private Warranty warranty;
 
+    // Ensure daysBeforeExpiry is not negative
     @NotNull(message = "Days before expiry is required")
     @Min(value = 0, message = "Days before expiry must be 0 or greater")
     @Column(name = "days_before_expiry", nullable = false)
     private Integer daysBeforeExpiry;
 
+    // Enabled flag
     @NotNull(message = "Enabled flag is required")
     @Column(nullable = false)
     private Boolean enabled;
 
+    // 🔹 AUTO-FILLED ALERT MESSAGE
     @Column(name = "alert_message", nullable = false)
     private String alertMessage;
 
+    // 🔹 AUTO-FILLED ALERT TIME
     @Column(name = "alert_time", nullable = false)
     private LocalDateTime alertTime;
 
-    // 🔹 AUTO-FILL LOGIC
+    // 🔹 AUTO SET BEFORE INSERT
     @PrePersist
-    public void autoFillFields() {
+    public void setDefaults() {
 
-        // set time
         if (alertTime == null) {
             alertTime = LocalDateTime.now();
         }
 
-        // generate message based on daysBeforeExpiry
         if (alertMessage == null || alertMessage.isBlank()) {
-
-            if (daysBeforeExpiry == 0) {
-                alertMessage = "Warranty expires today";
-            } else if (daysBeforeExpiry == 1) {
-                alertMessage = "Only 1 day left before warranty expiry";
-            } else if (daysBeforeExpiry <= 10) {
-                alertMessage = "Only " + daysBeforeExpiry +
-                        " days left before warranty expiry";
-            } else {
-                alertMessage = "Warranty expiring in " +
-                        daysBeforeExpiry + " days";
-            }
+            alertMessage = "Warranty expiring soon";
         }
     }
 }
