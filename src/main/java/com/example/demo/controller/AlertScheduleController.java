@@ -17,15 +17,17 @@ public class AlertScheduleController {
         this.service = service;
     }
 
-    // Add a new alert schedule
-    @PostMapping("/add")
-    public AlertSchedule addSchedule(@Valid @RequestBody AlertSchedule schedule) {
-        return service.saveSchedule(schedule);
+    // Create alert schedule for a warranty
+    @PostMapping("/{warrantyId}")
+    public AlertSchedule createSchedule(
+            @PathVariable Long warrantyId,
+            @Valid @RequestBody AlertSchedule schedule) {
+        return service.createSchedule(warrantyId, schedule);
     }
 
-    // Get all alert schedules
-    @GetMapping("/all")
-    public List<AlertSchedule> getSchedules() {
-        return service.getAllSchedules();
+    // Get alert schedules by warrantyId
+    @GetMapping("/{warrantyId}")
+    public List<AlertSchedule> getSchedules(@PathVariable Long warrantyId) {
+        return service.getSchedules(warrantyId);
     }
 }

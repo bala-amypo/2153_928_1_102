@@ -22,20 +22,17 @@ public class AlertScheduleServiceImpl implements AlertScheduleService {
     }
 
     @Override
-    public AlertSchedule saveSchedule(AlertSchedule s) {
-
-        Long warrantyId = s.getWarranty().getId();
+    public AlertSchedule createSchedule(Long warrantyId, AlertSchedule schedule) {
 
         Warranty warranty = warrantyRepo.findById(warrantyId)
                 .orElseThrow(() -> new RuntimeException("Warranty not found"));
 
-        s.setWarranty(warranty);
-
-        return alertRepo.save(s);
+        schedule.setWarranty(warranty);
+        return alertRepo.save(schedule);
     }
 
     @Override
-    public List<AlertSchedule> getAllSchedules() {
-        return alertRepo.findAll();
+    public List<AlertSchedule> getSchedules(Long warrantyId) {
+        return alertRepo.findByWarrantyId(warrantyId);
     }
 }
