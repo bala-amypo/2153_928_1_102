@@ -8,14 +8,20 @@ import com.example.demo.service.ProductService;
 
 @Service
 public class ProductServiceImpl implements ProductService {
+
     private final ProductRepository repo;
-    public ProductServiceImpl(ProductRepository repo){ this.repo = repo; }
+
+    public ProductServiceImpl(ProductRepository repo) {
+        this.repo = repo;
+    }
 
     @Override
-    public Product saveProduct(Product product){ return repo.save(product); }
+    public Product saveProduct(Product product) {
+        return repo.save(product);
+    }
 
     @Override
-    public List<Product> getAllProducts(){ return repo.findAll(); }
-
-    
+    public List<Product> getAllProducts() {
+        return repo.findAll();
+    }
 }
