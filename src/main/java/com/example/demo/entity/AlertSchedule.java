@@ -37,24 +37,7 @@ public class AlertSchedule {
     @Column(nullable = false)
     private Boolean enabled;
 
-    // 🔹 AUTO-FILLED ALERT MESSAGE
-    @Column(name = "alert_message", nullable = false)
-    private String alertMessage;
+   
 
-    // 🔹 AUTO-FILLED ALERT TIME
-    @Column(name = "alert_time", nullable = false)
-    private LocalDateTime alertTime;
-
-    // 🔹 AUTO SET BEFORE INSERT
-    @PrePersist
-    public void setDefaults() {
-
-        if (alertTime == null) {
-            alertTime = LocalDateTime.now();
-        }
-
-        if (alertMessage == null || alertMessage.isBlank()) {
-            alertMessage = "Warranty expiring soon";
-        }
-    }
+    
 }
