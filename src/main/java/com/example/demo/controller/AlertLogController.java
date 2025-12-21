@@ -1,29 +1,31 @@
 package com.example.demo.controller;
 
-import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
-import java.util.List;
 import com.example.demo.entity.AlertLog;
 import com.example.demo.service.AlertLogService;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/alerts")
 public class AlertLogController {
 
-    private final AlertLogService service;
+    private final AlertLogService alertLogService;
 
-    public AlertLogController(AlertLogService service) {
-        this.service = service;
+    public AlertLogController(AlertLogService alertLogService) {
+        this.alertLogService = alertLogService;
     }
 
-    // @Valid ensures validation is triggered
-    @PostMapping("/add")
-    public AlertLog addAlert(@Valid @RequestBody AlertLog log) {
-        return service.saveAlert(log);
+    // Add alert log for a warranty
+    @PostMapping("/add/{warrantyId}")
+    public AlertLog addAlert(@PathVariable Long warrantyId,
+                             @RequestParam String message) {
+        return alertLogService.addLog(warrantyId, message);
     }
 
-    @GetMapping("/all")
-    public List<AlertLog> getAlerts() {
-        return service.getAllAlerts();
+    // Get alert logs for a warranty
+    @GetMapping("/{warrantyId}")
+    public List<AlertLog> getAlerts(@PathVariable Long warrantyId) {
+        return alertLogService.getLogs(warrantyId);
     }
 }
