@@ -1,42 +1,25 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.AlertLog;
-import com.example.demo.entity.Warranty;
 import com.example.demo.repository.AlertLogRepository;
-import com.example.demo.repository.WarrantyRepository;
 import com.example.demo.service.AlertLogService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class AlertLogServiceImpl implements AlertLogService {
 
-    private final AlertLogRepository alertLogRepository;
-    private final WarrantyRepository warrantyRepository;
+    private final AlertLogRepository repository;
 
-    public AlertLogServiceImpl(AlertLogRepository alertLogRepository,
-                               WarrantyRepository warrantyRepository) {
-        this.alertLogRepository = alertLogRepository;
-        this.warrantyRepository = warrantyRepository;
+    public AlertLogServiceImpl(AlertLogRepository repository) {
+        this.repository = repository;
     }
 
     @Override
-    public AlertLog addLog(Long warrantyId, String message) {
-
-        Warranty warranty = warrantyRepository.findById(warrantyId)
-                .orElseThrow(() -> new RuntimeException("Warranty not found"));
-
-        AlertLog log = AlertLog.builder()
-                .warranty(warranty)
-                .message(message)
-                .build();
-
-        return alertLogRepository.save(log);
-    }
-
-    @Override
-    public List<AlertLog> getLogs(Long warrantyId) {
-        return alertLogRepository.findByWarrantyId(warrantyId);
+    public List<AlertLog> getLogsByWarrantyId(Long warrantyId) {
+        return repository.findByWarrantyId(warrantyId);
     }
 }
