@@ -49,7 +49,7 @@ public class SecurityConfig {
         return authConfig.getAuthenticationManager();
     }
 
-    // ✅ Pass required dependencies to JwtAuthenticationFilter
+    // ✅ Corrected: pass dependencies to JwtAuthenticationFilter
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationFilter(jwtTokenProvider, customUserDetailsService);
