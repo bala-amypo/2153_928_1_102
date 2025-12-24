@@ -1,7 +1,10 @@
 package com.example.demo.security;
 
 import com.example.demo.config.JwtProperties;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.JwtException;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -27,15 +30,19 @@ public class JwtTokenProvider {
                 .claim("role", role)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS512, jwtProperties.getSecret())
+                .signWith(
+                        SignatureAlgorithm.HS512,
+                        jwtProperties.getSecret()
+                )
                 .compact();
     }
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser()
-                .setSigningKey(jwtProperties.getSecret())
-                .parseClaimsJws(token);
+            Jwts.parserBuilder()
+                    .setSigningKey(jwtProperties.getSecret())
+                    .build()
+                    .parseClaimsJws(token);
             return true;
         } catch (JwtException | IllegalArgumentException ex) {
             return false;
@@ -51,8 +58,9 @@ public class JwtTokenProvider {
     }
 
     private Claims getClaims(String token) {
-        return Jwts.parser()
+        return Jwts.parserBuilder()
                 .setSigningKey(jwtProperties.getSecret())
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
