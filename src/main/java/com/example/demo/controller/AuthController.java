@@ -1,11 +1,14 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.AuthRequest;
+import com.example.demo.dto.AuthResponse;
+import com.example.demo.dto.RegisterRequest;
+import com.example.demo.entity.User;
+import com.example.demo.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-import com.example.demo.entity.User;
-import com.example.demo.service.UserService;
 
 @RestController
 @RequestMapping("/auth")
@@ -19,22 +22,31 @@ public class AuthController {
         this.userService = userService;
     }
 
-    
+    // ✅ REGISTER
     @PostMapping("/register")
-    public User register(@RequestBody User user) {
-        return userService.register(user);
+    public AuthResponse register(@RequestBody RegisterRequest request) {
+
+        User user = User.builder()
+                .name(request.getName())
+                .email(request.getEmail())
+                .password(request.getPassword())
+                .build();
+
+        userService.register(user);
+        return new AuthResponse("User registered successfully");
     }
 
-    
+    // ✅ LOGIN
     @PostMapping("/login")
-    public String login(@RequestBody User user) {
+    public AuthResponse login(@RequestBody AuthRequest request) {
 
-        User dbUser = userService.findByEmail(user.getEmail());
+        User dbUser = userService.findByEmail(request.getEmail());
 
-        if (dbUser == null || !passwordEncoder.matches(user.getPassword(), dbUser.getPassword())) {
-            return "Invalid credentials";
+        if (dbUser == null ||
+                !passwordEncoder.matches(request.getPassword(), dbUser.getPassword())) {
+            return new AuthResponse("Invalid credentials");
         }
 
-        return "Login successful";
+        return new AuthResponse("Login successful");
     }
 }
