@@ -4,6 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.dto.AuthRequest;
+import com.example.demo.dto.AuthResponse;
+import com.example.demo.dto.RegisterRequest;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
@@ -20,24 +23,43 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User register(User user) {
+    public AuthResponse register(RegisterRequest request) {
 
-        // Email uniqueness check
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new RuntimeException("email already exists");
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new RuntimeException("Email already exists");
         }
 
-        // Hash password
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        User user = User.builder()
+                .name(request.getName())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .role("USER")
+                .build();
 
-        // Default role
-        user.setRole("USER");
-
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        return mapToResponse(savedUser);
     }
 
     @Override
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public AuthResponse login(AuthRequest request) {
+
+        User user = userRepository.findByEmail(request.getEmail());
+
+        if (user == null || 
+            !passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new RuntimeException("Invalid credentials");
+        }
+
+        return mapToResponse(user);
+    }
+
+    // Mapper method
+    private AuthResponse mapToResponse(User user) {
+        AuthResponse response = new AuthResponse();
+        response.setId(user.getId());
+        response.setName(user.getName());
+        response.setEmail(user.getEmail());
+        response.setRole(user.getRole());
+        return response;
     }
 }
