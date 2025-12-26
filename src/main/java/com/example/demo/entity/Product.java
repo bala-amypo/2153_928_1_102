@@ -20,64 +20,9 @@ public class Product {
 
     private String brand;
 
+    @Column(nullable = false)
     private String modelNumber;
 
+    @Column(nullable = false)
     private String category;
-}
-package com.example.demo.entity;
-
-import jakarta.persistence.*;
-import lombok.*;
-
-@Entity
-@Table(name = "alert_schedules")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class AlertSchedule {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @ManyToOne
-    private Warranty warranty;
-
-    private Integer daysBeforeExpiry;
-
-    private Boolean enabled;
-}
-package com.example.demo.entity;
-
-import jakarta.persistence.*;
-import lombok.*;
-
-import java.time.LocalDateTime;
-
-@Entity
-@Table(name = "alert_logs")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class AlertLog {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @ManyToOne
-    private Warranty warranty;
-
-    private LocalDateTime sentAt;
-
-    private String message;
-
-    @PrePersist
-    public void prePersist() {
-        this.sentAt = LocalDateTime.now();
-    }
 }

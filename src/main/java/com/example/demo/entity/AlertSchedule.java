@@ -16,7 +16,8 @@ public class AlertSchedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "warranty_id", nullable = false)
     private Warranty warranty;
 
     private Integer daysBeforeExpiry;
