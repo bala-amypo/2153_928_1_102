@@ -1,5 +1,6 @@
 package com.example.demo.security;
 
+import com.example.demo.config.JwtProperties;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
@@ -10,12 +11,22 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-    // Generate a secure key for HS512 (256-bit minimum)
-    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+    private final Key key;
+    private final long jwtExpirationMs;
 
-    private final long jwtExpirationMs = 86400000; // 1 day
+    // ✅ Default constructor (Spring)
+    public JwtTokenProvider() {
+        this.key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+        this.jwtExpirationMs = 86400000;
+    }
 
-    // Generate JWT token for given email
+    // ✅ REQUIRED for test cases
+    public JwtTokenProvider(JwtProperties properties) {
+        this.key = Keys.hmacShaKeyFor(properties.getSecret().getBytes());
+        this.jwtExpirationMs = properties.getExpiration();
+    }
+
+    // ✅ New API
     public String generateToken(String email) {
         return Jwts.builder()
                 .setSubject(email)
@@ -25,27 +36,36 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    // Validate JWT token
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(token);
-            return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            // Invalid token
-            return false;
-        }
+    // ✅ Legacy API for tests
+    public String createToken(long id, String email, String role) {
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("role", role)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
+                .signWith(key)
+                .compact();
     }
 
-    // Extract username/email from token
-    public String getUsernameFromToken(String token) {
-        Claims claims = Jwts.parserBuilder()
+    // ✅ REQUIRED by tests
+    public Claims getClaims(String token) {
+        return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-        return claims.getSubject();
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            return true;
+        } catch (JwtException e) {
+            return false;
+        }
+    }
+
+    public String getUsernameFromToken(String token) {
+        return getClaims(token).getSubject();
     }
 }

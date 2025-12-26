@@ -19,22 +19,19 @@ public class Product {
     private String brand;
 
     @Column(nullable = false)
-    private String modelNumber;      // REQUIRED
+    private String modelNumber;
 
     @Column(nullable = false)
-    private String category;         // REQUIRED
+    private String category;
 
     private Integer warrantyPeriodMonths;
 
-    // Optional: Static factory method to make builder usage more explicit in tests
-    public static Product createProduct(Long id, String name, String brand, String modelNumber, String category, Integer warrantyPeriodMonths) {
-        return Product.builder()
-                .id(id)
-                .name(name)
-                .brand(brand)
-                .modelNumber(modelNumber)
-                .category(category)
-                .warrantyPeriodMonths(warrantyPeriodMonths)
-                .build();
+    // ✅ REQUIRED for test cases
+    public Product(Long id, String name, String brand, String modelNumber, String category) {
+        this.id = id;
+        this.name = name;
+        this.brand = brand;
+        this.modelNumber = modelNumber;
+        this.category = category;
     }
 }
