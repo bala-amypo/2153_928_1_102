@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
 
     // ✅ REGISTER USER
     @Override
-    public UserResponse register(RegisterRequest request) {
+    public AuthResponse register(RegisterRequest request) {
 
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email already exists");
@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
 
     // ✅ LOGIN + JWT TOKEN
     @Override
-    public String loginAndGenerateToken(LoginRequest request) {
+    public String loginAndGenerateToken(AuthRequest request) {
 
         User user = userRepository.findByEmail(request.getEmail());
 
