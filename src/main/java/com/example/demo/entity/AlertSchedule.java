@@ -2,13 +2,10 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDateTime;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Entity
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor @Builder
 public class AlertSchedule {
 
     @Id
@@ -16,8 +13,7 @@ public class AlertSchedule {
     private Long id;
 
     private Integer daysBeforeExpiry;
-    private Boolean enabled;
-    private LocalDateTime scheduleTime;
+    private boolean enabled;
 
     @ManyToOne
     private Warranty warranty;

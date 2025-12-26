@@ -3,11 +3,9 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Entity
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor @Builder
 public class User {
 
     @Id
