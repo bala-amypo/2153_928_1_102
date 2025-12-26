@@ -16,13 +16,11 @@ public class AuthController {
         this.userService = userService;
     }
 
-    // ✅ REGISTER
     @PostMapping("/register")
     public UserResponse register(@RequestBody RegisterRequest request) {
         return userService.register(request);
     }
 
-    // ✅ LOGIN (JWT)
     @PostMapping("/login")
     public String login(@RequestBody LoginRequest request) {
         return userService.loginAndGenerateToken(request);
