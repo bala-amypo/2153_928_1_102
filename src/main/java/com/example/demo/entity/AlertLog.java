@@ -11,56 +11,45 @@ public class AlertLog {
     private Long id;
 
     private String message;
-
     private LocalDateTime sentAt;
 
     @ManyToOne
-    @JoinColumn(name = "warranty_id")
     private Warranty warranty;
 
     public AlertLog() {}
 
-    // ===== lifecycle =====
     @PrePersist
     public void prePersist() {
         this.sentAt = LocalDateTime.now();
     }
 
-    // ===== getters =====
-    public LocalDateTime getSentAt() {
-        return sentAt;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public String getMessage() {
-        return message;
-    }
+    public LocalDateTime getSentAt() { return sentAt; }
 
-    // ===== builder (REQUIRED BY SERVICE + TESTS) =====
     public static Builder builder() {
         return new Builder();
     }
 
     public static class Builder {
-
         private Warranty warranty;
         private String message;
 
-        public Builder warranty(Warranty warranty) {
-            this.warranty = warranty;
-            return this;
+        public Builder warranty(Warranty w) {
+            this.warranty = w; return this;
         }
 
-        public Builder message(String message) {
-            this.message = message;
-            return this;
+        public Builder message(String m) {
+            this.message = m; return this;
         }
 
         public AlertLog build() {
-            AlertLog log = new AlertLog();
-            log.warranty = this.warranty;
-            log.message = this.message;
-            log.prePersist();
-            return log;
+            AlertLog l = new AlertLog();
+            l.warranty = this.warranty;
+            l.message = this.message;
+            l.prePersist();
+            return l;
         }
     }
 }

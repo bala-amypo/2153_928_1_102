@@ -9,59 +9,49 @@ public class AlertSchedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int daysBeforeExpiry;
-
+    private Integer daysBeforeExpiry;   // MUST be Integer
+    private boolean enabled;
     private boolean sent;
 
     @ManyToOne
-    @JoinColumn(name = "warranty_id")
     private Warranty warranty;
 
     public AlertSchedule() {}
 
-    // ===== getters & setters =====
+    // ===== getters/setters =====
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public int getDaysBeforeExpiry() {
-        return daysBeforeExpiry;
-    }
+    public Integer getDaysBeforeExpiry() { return daysBeforeExpiry; }
 
-    public void setDaysBeforeExpiry(int daysBeforeExpiry) {
-        this.daysBeforeExpiry = daysBeforeExpiry;
-    }
-
-    public boolean isSent() {
-        return sent;
-    }
-
-    public void setSent(boolean sent) {
-        this.sent = sent;
-    }
-
-    public Warranty getWarranty() {
-        return warranty;
-    }
-
-    public void setWarranty(Warranty warranty) {
-        this.warranty = warranty;
-    }
-
-    // ===== builder (REQUIRED by tests) =====
+    // ===== builder =====
     public static Builder builder() {
         return new Builder();
     }
 
     public static class Builder {
-        private int daysBeforeExpiry;
+        private Integer daysBeforeExpiry;
+        private boolean enabled;
+        private Warranty warranty;
 
-        public Builder daysBeforeExpiry(int daysBeforeExpiry) {
-            this.daysBeforeExpiry = daysBeforeExpiry;
-            return this;
+        public Builder daysBeforeExpiry(Integer d) {
+            this.daysBeforeExpiry = d; return this;
+        }
+
+        public Builder enabled(boolean e) {
+            this.enabled = e; return this;
+        }
+
+        public Builder warranty(Warranty w) {
+            this.warranty = w; return this;
         }
 
         public AlertSchedule build() {
-            AlertSchedule s = new AlertSchedule();
-            s.setDaysBeforeExpiry(this.daysBeforeExpiry);
-            return s;
+            AlertSchedule a = new AlertSchedule();
+            a.daysBeforeExpiry = this.daysBeforeExpiry;
+            a.enabled = this.enabled;
+            a.warranty = this.warranty;
+            return a;
         }
     }
 }
