@@ -5,25 +5,26 @@ import com.example.demo.dto.AuthResponse;
 import com.example.demo.dto.RegisterRequest;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
-import com.example.demo.security.JwtUtil;
+import com.example.demo.security.JwtTokenProvider;
 import com.example.demo.service.UserService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final JwtUtil jwtUtil;
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final JwtTokenProvider jwtTokenProvider;
+    private final PasswordEncoder passwordEncoder;
 
     public UserServiceImpl(UserRepository userRepository,
-                           JwtUtil jwtUtil) {
+                           JwtTokenProvider jwtTokenProvider,
+                           PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.jwtUtil = jwtUtil;
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    // ✅ REGISTER
     @Override
     public AuthResponse register(RegisterRequest request) {
 
@@ -48,7 +49,6 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    // ✅ LOGIN + JWT
     @Override
     public String loginAndGenerateToken(AuthRequest request) {
 
@@ -59,6 +59,6 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Invalid credentials");
         }
 
-        return jwtUtil.generateToken(user.getEmail());
+        return jwtTokenProvider.generateToken(user.getEmail());
     }
 }

@@ -9,7 +9,7 @@ import com.example.demo.repository.WarrantyRepository;
 import com.example.demo.service.WarrantyService;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class WarrantyServiceImpl implements WarrantyService {
@@ -27,9 +27,7 @@ public class WarrantyServiceImpl implements WarrantyService {
     }
 
     @Override
-    public Warranty registerWarranty(Long userId,
-                                     Long productId,
-                                     Warranty warranty) {
+    public Warranty registerWarranty(Long userId, Long productId, Warranty warranty) {
 
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -40,8 +38,8 @@ public class WarrantyServiceImpl implements WarrantyService {
         warranty.setUser(user);
         warranty.setProduct(product);
 
-        if (warranty.getPurchaseDate() != null
-                && product.getWarrantyPeriodMonths() != null) {
+        if (warranty.getPurchaseDate() != null &&
+                product.getWarrantyPeriodMonths() != null) {
 
             warranty.setExpiryDate(
                     warranty.getPurchaseDate()
@@ -60,7 +58,7 @@ public class WarrantyServiceImpl implements WarrantyService {
     }
 
     @Override
-    public java.util.List<Warranty> getUserWarranties(Long userId) {
+    public List<Warranty> getUserWarranties(Long userId) {
         return warrantyRepo.findByUserId(userId);
     }
 }
