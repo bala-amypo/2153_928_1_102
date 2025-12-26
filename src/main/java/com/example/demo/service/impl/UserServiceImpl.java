@@ -1,8 +1,8 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.dto.AuthRequest;
-import com.example.demo.dto.RegisterRequest;
 import com.example.demo.dto.AuthResponse;
+import com.example.demo.dto.RegisterRequest;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.JwtUtil;
@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
         this.jwtUtil = jwtUtil;
     }
 
-    // ✅ REGISTER USER
+    // ✅ REGISTER
     @Override
     public AuthResponse register(RegisterRequest request) {
 
@@ -48,14 +48,14 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    // ✅ LOGIN + JWT TOKEN
+    // ✅ LOGIN + JWT
     @Override
     public String loginAndGenerateToken(AuthRequest request) {
 
-        User user = userRepository.findByEmail(request.getEmail());
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
 
-        if (user == null ||
-            !passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
 
