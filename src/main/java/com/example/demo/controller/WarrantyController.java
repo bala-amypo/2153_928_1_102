@@ -1,41 +1,39 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Warranty;
-import com.example.demo.service.WarrantyService;
-import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
+import com.example.demo.service.impl.WarrantyServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/warranties")
+@Tag(name = "Warranties")
 public class WarrantyController {
 
-    private final WarrantyService service;
+    private final WarrantyServiceImpl warrantyService;
 
-    public WarrantyController(WarrantyService service) {
-        this.service = service;
+    public WarrantyController(WarrantyServiceImpl warrantyService) {
+        this.warrantyService = warrantyService;
     }
 
     @PostMapping("/register/{userId}/{productId}")
-    public ResponseEntity<Warranty> registerWarranty(
-            @PathVariable Long userId,
-            @PathVariable Long productId,
-            @Valid @RequestBody Warranty warranty) {
-
-        return ResponseEntity.ok(
-                service.registerWarranty(userId, productId, warranty)
-        );
+    @Operation(summary = "Register warranty")
+    public Warranty registerWarranty(@PathVariable Long userId,
+                                     @PathVariable Long productId,
+                                     @RequestBody Warranty warranty) {
+        return warrantyService.registerWarranty(userId, productId, warranty);
     }
 
     @GetMapping("/{warrantyId}")
-    public ResponseEntity<Warranty> getWarranty(@PathVariable Long warrantyId) {
-        return ResponseEntity.ok(service.getWarranty(warrantyId));
+    @Operation(summary = "Get warranty by ID")
+    public Warranty getWarranty(@PathVariable Long warrantyId) {
+        return warrantyService.getWarranty(warrantyId);
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Warranty>> getUserWarranties(@PathVariable Long userId) {
-        return ResponseEntity.ok(service.getUserWarranties(userId));
-    }
-}
+    @Operation(summary = "Get warranties by user")
+    public List<Warranty> getUserWarranties(@PathVariable Long userId) {
+        return warrantyService.getUserWarranties(userId);
