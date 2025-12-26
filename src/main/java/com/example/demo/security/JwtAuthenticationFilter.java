@@ -31,8 +31,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String email = tokenProvider.getEmailFromToken(token);
             Long userId = tokenProvider.getUserIdFromToken(token);
             
-            // You could load user details from database here
-            
             UsernamePasswordAuthenticationToken auth = 
                 new UsernamePasswordAuthenticationToken(email, null, null);
             auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
