@@ -1,30 +1,32 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.AlertLogDTO;
 import com.example.demo.entity.AlertLog;
-import com.example.demo.service.AlertLogService;
+import com.example.demo.service.impl.AlertLogServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/alerts")
+@RequestMapping("/api/alerts/logs")
 public class AlertLogController {
 
-    private final AlertLogService alertLogService;
+    private final AlertLogServiceImpl service;
 
-    public AlertLogController(AlertLogService alertLogService) {
-        this.alertLogService = alertLogService;
+    public AlertLogController(AlertLogServiceImpl service) {
+        this.service = service;
     }
 
-    
-    @PostMapping("/add/{warrantyId}")
-    public AlertLog addAlert(@PathVariable Long warrantyId,@RequestParam String message) {
-        return alertLogService.addLog(warrantyId, message);
+    @PostMapping("/{warrantyId}")
+    public AlertLog addLog(
+            @PathVariable Long warrantyId,
+            @RequestBody AlertLogDTO dto) {
+
+        return service.addLog(warrantyId, dto.getMessage());
     }
 
-    
     @GetMapping("/{warrantyId}")
-    public List<AlertLog> getAlerts(@PathVariable Long warrantyId) {
-        return alertLogService.getLogs(warrantyId);
+    public List<AlertLog> getLogs(@PathVariable Long warrantyId) {
+        return service.getLogs(warrantyId);
     }
 }

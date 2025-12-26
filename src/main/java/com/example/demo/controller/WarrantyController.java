@@ -1,41 +1,43 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.WarrantyDTO;
 import com.example.demo.entity.Warranty;
-import com.example.demo.service.WarrantyService;
+import com.example.demo.service.impl.WarrantyServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/warranties")
+@RequestMapping("/api/warranties")
 public class WarrantyController {
 
-    private final WarrantyService service;
+    private final WarrantyServiceImpl warrantyService;
 
-    public WarrantyController(WarrantyService service) {
-        this.service = service;
+    public WarrantyController(WarrantyServiceImpl warrantyService) {
+        this.warrantyService = warrantyService;
     }
 
-    
-    @PostMapping("/register/{userId}/{productId}")
-    public Warranty registerWarranty(
-            @PathVariable Long userId,
-            @PathVariable Long productId,
-            @RequestBody Warranty warranty) {
-
-        return service.registerWarranty(warranty);
+    @PostMapping
+    public Warranty register(@RequestBody WarrantyDTO dto) {
+        Warranty w = Warranty.builder()
+                .purchaseDate(dto.getPurchaseDate())
+                .expiryDate(dto.getExpiryDate())
+                .serialNumber(dto.getSerialNumber())
+                .build();
+        return warrantyService.registerWarranty(
+                dto.getUserId(),
+                dto.getProductId(),
+                w
+        );
     }
 
-    
-    @GetMapping("/{warrantyId}")
-    public Warranty getWarranty(@PathVariable Long warrantyId) {
-        return service.getWarrantyById(warrantyId);
-    }
-
-   
     @GetMapping("/user/{userId}")
-    public List<Warranty> getUserWarranties(
-            @PathVariable Long userId) {
-        return service.getWarrantiesByUser(userId);
+    public List<Warranty> getUserWarranties(@PathVariable Long userId) {
+        return warrantyService.getUserWarranties(userId);
+    }
+
+    @GetMapping("/{id}")
+    public Warranty getWarranty(@PathVariable Long id) {
+        return warrantyService.getWarranty(id);
     }
 }

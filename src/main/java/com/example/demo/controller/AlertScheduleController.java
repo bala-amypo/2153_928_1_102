@@ -1,33 +1,37 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.AlertScheduleDTO;
 import com.example.demo.entity.AlertSchedule;
-import com.example.demo.service.AlertScheduleService;
-import jakarta.validation.Valid;
+import com.example.demo.service.impl.AlertScheduleServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/schedules")
+@RequestMapping("/api/alerts/schedules")
 public class AlertScheduleController {
 
-    private final AlertScheduleService service;
+    private final AlertScheduleServiceImpl service;
 
-    public AlertScheduleController(AlertScheduleService service) {
+    public AlertScheduleController(AlertScheduleServiceImpl service) {
         this.service = service;
     }
 
-    
     @PostMapping("/{warrantyId}")
-    public AlertSchedule createSchedule(
+    public AlertSchedule create(
             @PathVariable Long warrantyId,
-            @Valid @RequestBody AlertSchedule schedule) {
-        return service.createSchedule(warrantyId, schedule);
+            @RequestBody AlertScheduleDTO dto) {
+
+        AlertSchedule s = AlertSchedule.builder()
+                .daysBeforeExpiry(dto.getDaysBeforeExpiry())
+                .enabled(dto.getEnabled())
+                .build();
+
+        return service.createSchedule(warrantyId, s);
     }
 
-    
     @GetMapping("/{warrantyId}")
-    public List<AlertSchedule> getSchedules(@PathVariable Long warrantyId) {
+    public List<AlertSchedule> list(@PathVariable Long warrantyId) {
         return service.getSchedules(warrantyId);
     }
 }
