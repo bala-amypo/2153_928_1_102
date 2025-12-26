@@ -10,12 +10,12 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-    // Generate a secure 256-bit key for HS512
+    // Generate a secure key for HS512 (256-bit minimum)
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
     private final long jwtExpirationMs = 86400000; // 1 day
 
-    // Generate JWT token
+    // Generate JWT token for given email
     public String generateToken(String email) {
         return Jwts.builder()
                 .setSubject(email)
@@ -25,7 +25,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    // Validate token
+    // Validate JWT token
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
@@ -34,6 +34,7 @@ public class JwtTokenProvider {
                     .parseClaimsJws(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
+            // Invalid token
             return false;
         }
     }
