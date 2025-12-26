@@ -1,4 +1,3 @@
-// src/main/java/com/example/demo/service/impl/WarrantyServiceImpl.java
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.Product;
@@ -8,70 +7,60 @@ import com.example.demo.repository.ProductRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.repository.WarrantyRepository;
 import com.example.demo.service.WarrantyService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDate;
-import java.util.List;
 
 @Service
-@Transactional
 public class WarrantyServiceImpl implements WarrantyService {
-    
-    @Autowired
-    private WarrantyRepository warrantyRepository;
-    
-    @Autowired
-    private UserRepository userRepository;
-    
-    @Autowired
-    private ProductRepository productRepository;
-    
-    public WarrantyServiceImpl(WarrantyRepository warrantyRepository, 
-                              UserRepository userRepository, 
-                              ProductRepository productRepository) {
-        this.warrantyRepository = warrantyRepository;
-        this.userRepository = userRepository;
-        this.productRepository = productRepository;
+
+    private final WarrantyRepository warrantyRepo;
+    private final UserRepository userRepo;
+    private final ProductRepository productRepo;
+
+    public WarrantyServiceImpl(WarrantyRepository warrantyRepo,
+                               UserRepository userRepo,
+                               ProductRepository productRepo) {
+        this.warrantyRepo = warrantyRepo;
+        this.userRepo = userRepo;
+        this.productRepo = productRepo;
     }
-    
+
     @Override
-    public Warranty registerWarranty(Long userId, Long productId, Warranty warranty) {
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
-        
-        Product product = productRepository.findById(productId)
-            .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
-        
-        // Validate serial number uniqueness
-        if (warrantyRepository.existsBySerialNumber(warranty.getSerialNumber())) {
-            throw new IllegalArgumentException("Serial number must be unique: " + warranty.getSerialNumber());
-        }
-        
-        // Validate dates
-        if (warranty.getExpiryDate().isBefore(warranty.getPurchaseDate()) || 
-            warranty.getExpiryDate().isEqual(warranty.getPurchaseDate())) {
-            throw new IllegalArgumentException("Expiry date must be after purchase date");
-        }
-        
+    public Warranty registerWarranty(Long userId,
+                                     Long productId,
+                                     Warranty warranty) {
+
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Product product = productRepo.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
         warranty.setUser(user);
         warranty.setProduct(product);
-        
-        return warrantyRepository.save(warranty);
+
+        if (warranty.getPurchaseDate() != null
+                && product.getWarrantyPeriodMonths() != null) {
+
+            warranty.setExpiryDate(
+                    warranty.getPurchaseDate()
+                            .plusMonths(product.getWarrantyPeriodMonths())
+            );
+        }
+
+        warranty.setStatus("ACTIVE");
+        return warrantyRepo.save(warranty);
     }
-    
+
     @Override
-    public List<Warranty> getUserWarranties(Long userId) {
-        return warrantyRepository.findByUserId(userId);
+    public Warranty getWarranty(Long warrantyId) {
+        return warrantyRepo.findById(warrantyId)
+                .orElseThrow(() -> new RuntimeException("Warranty not found"));
     }
-    
+
     @Override
-    public Warranty getWarranty(Long id) {
-        return warrantyRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Warranty not found with id: " + id));
-    }
-    
-    public List<Warranty> getWarrantiesExpiringBetween(LocalDate startDate, LocalDate endDate) {
-        return warrantyRepository.findWarrantiesExpiringBetween(startDate, endDate);
+    public java.util.List<Warranty> getUserWarranties(Long userId) {
+        return warrantyRepo.findByUserId(userId);
     }
 }
