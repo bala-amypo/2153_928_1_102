@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -19,16 +20,20 @@ public class SecurityConfig {
 
         http
             .csrf(csrf -> csrf.disable())
+
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
-                    "/auth/**",
-                    "/swagger-ui/**",
-                    "/v3/api-docs/**",
-                    "/h2-console/**"
+                    new AntPathRequestMatcher("/auth/**"),
+                    new AntPathRequestMatcher("/swagger-ui/**"),
+                    new AntPathRequestMatcher("/v3/api-docs/**"),
+                    new AntPathRequestMatcher("/h2-console/**")
                 ).permitAll()
                 .anyRequest().authenticated()
             )
-            .headers(headers -> headers.frameOptions(frame -> frame.disable())) // H2 Console
+
+            // REQUIRED for H2 console
+            .headers(headers -> headers.frameOptions(frame -> frame.disable()))
+
             .formLogin(form -> form.disable())
             .httpBasic(basic -> basic.disable());
 
@@ -42,7 +47,7 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
+            AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
     }
 }
