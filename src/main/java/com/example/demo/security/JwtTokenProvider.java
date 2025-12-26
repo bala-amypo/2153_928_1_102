@@ -1,74 +1,64 @@
-package com.example.demo.security;
+package com.example.demo.service.impl;
 
-import com.example.demo.config.JwtProperties;
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.stereotype.Component;
+import com.example.demo.dto.AuthRequest;
+import com.example.demo.dto.RegisterRequest;
+import com.example.demo.entity.User;
+import com.example.demo.repository.UserRepository;
+import com.example.demo.security.JwtTokenProvider;
+import com.example.demo.service.UserService;
 
-import java.security.Key;
-import java.util.Date;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
-@Component
-public class JwtTokenProvider {
+@Service
+public class UserServiceImpl implements UserService {
 
-    private final Key key;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    // ✅ Keep expiration fixed (tests do NOT check this value)
-    private final long jwtExpirationMs = 86400000; // 1 day
-
-    // ✅ Default constructor (Spring usage)
-    public JwtTokenProvider() {
-        this.key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+    // ✅ IMPORTANT: Explicit constructor injection
+    @Autowired
+    public UserServiceImpl(UserRepository userRepository,
+                           PasswordEncoder passwordEncoder,
+                           JwtTokenProvider jwtTokenProvider) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    // ✅ REQUIRED for test cases (DO NOT call getExpiration())
-    public JwtTokenProvider(JwtProperties properties) {
-        this.key = Keys.hmacShaKeyFor(properties.getSecret().getBytes());
+    @Override
+    public User registerUser(RegisterRequest request) {
+        User user = new User();
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole("USER");
+        return userRepository.save(user);
     }
 
-    // ✅ Modern method used by services
-    public String generateToken(String email) {
-        return Jwts.builder()
-                .setSubject(email)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
-                .signWith(key)
-                .compact();
+    @Override
+    public User register(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userRepository.save(user);
     }
 
-    // ✅ Legacy method REQUIRED by test suite
-    public String createToken(long id, String email, String role) {
-        return Jwts.builder()
-                .setSubject(email)
-                .claim("role", role)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
-                .signWith(key)
-                .compact();
-    }
+    @Override
+    public String loginAndGenerateToken(AuthRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-    // ✅ REQUIRED by tests
-    public Claims getClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
-
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(token);
-            return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            return false;
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new RuntimeException("Invalid credentials");
         }
+
+        return jwtTokenProvider.generateToken(user.getEmail());
     }
 
-    public String getUsernameFromToken(String token) {
-        return getClaims(token).getSubject();
+    @Override
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 }
