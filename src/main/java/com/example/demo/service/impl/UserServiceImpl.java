@@ -4,7 +4,7 @@ import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
+@service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository repo;

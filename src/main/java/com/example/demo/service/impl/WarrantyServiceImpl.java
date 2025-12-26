@@ -5,7 +5,7 @@ import com.example.demo.repository.*;
 import com.example.demo.service.WarrantyService;
 
 import java.util.List;
-
+@service
 public class WarrantyServiceImpl implements WarrantyService {
 
     private final WarrantyRepository warrantyRepo;
