@@ -25,5 +25,7 @@ public class Warranty {
 
     private LocalDate purchaseDate;
 
+    private LocalDate expiryDate;
+
     private String status;
 }

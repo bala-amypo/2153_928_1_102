@@ -16,4 +16,7 @@ public class AlertLog {
     private Long id;
 
     private String message;
+
+    @ManyToOne
+    private Warranty warranty;
 }
