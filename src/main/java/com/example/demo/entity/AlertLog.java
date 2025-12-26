@@ -9,21 +9,16 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Entity
-public class AlertLog {
+public class AlertSchedule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String message;
-
-    private LocalDateTime alertTime;
+    private Integer daysBeforeExpiry;
+    private Boolean enabled;
+    private LocalDateTime scheduleTime;
 
     @ManyToOne
     private Warranty warranty;
-
-    // Used to set alert time automatically
-    public void prePersist() {
-        this.alertTime = LocalDateTime.now();
-    }
 }
