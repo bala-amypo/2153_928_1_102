@@ -21,7 +21,7 @@ public class AlertLogServiceImpl implements AlertLogService {
     }
 
     @Override
-    public AlertLog addLog(Long warrantyId, String message){
+    public AlertLog addLog(Long warrantyId, String alertmessage){
         warrantyRepository.findById(warrantyId).orElseThrow(() -> new RuntimeException("Warranty not found"));
 
         AlertLog log = AlertLog.builder().message(message).build();
