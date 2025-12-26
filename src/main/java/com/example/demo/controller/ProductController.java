@@ -1,35 +1,28 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.ProductDTO;
 import com.example.demo.entity.Product;
-import com.example.demo.service.impl.ProductServiceImpl;
+import com.example.demo.service.ProductService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/products")
 public class ProductController {
 
-    private final ProductServiceImpl productService;
+    private final ProductService service;
 
-    public ProductController(ProductServiceImpl productService) {
-        this.productService = productService;
+    public ProductController(ProductService service) {
+        this.service = service;
     }
 
     @PostMapping
-    public Product add(@RequestBody ProductDTO dto) {
-        Product p = Product.builder()
-                .name(dto.getName())
-                .brand(dto.getBrand())
-                .modelNumber(dto.getModelNumber())
-                .category(dto.getCategory())
-                .build();
-        return productService.addProduct(p);
+    public Product add(@RequestBody Product product) {
+        return service.addProduct(product);
     }
 
     @GetMapping
-    public List<Product> list() {
-        return productService.getAllProducts();
+    public List<Product> getAll() {
+        return service.getAllProducts();
     }
 }
