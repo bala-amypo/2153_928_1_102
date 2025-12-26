@@ -3,8 +3,6 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Getter
 @Setter
@@ -18,14 +16,4 @@ public class AlertLog {
     private Long id;
 
     private String message;
-    private LocalDateTime sentAt;
-
-    @ManyToOne
-    private Warranty warranty;
-
-    // REQUIRED BY TESTS
-    @PrePersist
-    public void prePersist() {
-        this.sentAt = LocalDateTime.now();
-    }
 }

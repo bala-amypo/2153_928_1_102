@@ -17,14 +17,13 @@ public class Warranty {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String serialNumber;
-    private LocalDate purchaseDate;
-    private LocalDate expiryDate;
-    private String status;
-
     @ManyToOne
     private User user;
 
     @ManyToOne
     private Product product;
+
+    private LocalDate purchaseDate;
+
+    private String status;
 }
