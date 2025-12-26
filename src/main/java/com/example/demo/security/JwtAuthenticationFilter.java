@@ -1,18 +1,20 @@
 package com.example.demo.security;
 
-import com.example.demo.config.JwtProperties;
 import io.jsonwebtoken.Claims;
-import jakarta.servlet.*;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
 
+@Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -33,23 +35,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token = header.substring(7);
 
             if (jwtTokenProvider.validateToken(token)) {
-                Claims claims = jwtTokenProvider.getClaims(token).getBody();
-                String email = claims.get("email", String.class);
+
+                Claims claims = jwtTokenProvider.getClaims(token);
+
+                String email = claims.getSubject();
                 String role = claims.get("role", String.class);
 
-                UsernamePasswordAuthenticationToken auth =
+                UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
                                 email,
                                 null,
-                                List.of(() -> "ROLE_" + role)
+                                List.of(new SimpleGrantedAuthority("ROLE_" + role))
                         );
 
-                auth.setDetails(
-                        new WebAuthenticationDetailsSource()
-                                .buildDetails(request));
-
-                SecurityContextHolder.getContext()
-                        .setAuthentication(auth);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
 
