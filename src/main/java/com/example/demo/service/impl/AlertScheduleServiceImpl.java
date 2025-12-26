@@ -7,7 +7,7 @@ import com.example.demo.repository.WarrantyRepository;
 import com.example.demo.service.AlertScheduleService;
 
 import java.util.List;
-@service
+@Service
 public class AlertScheduleServiceImpl implements AlertScheduleService {
 
     private final AlertScheduleRepository repo;

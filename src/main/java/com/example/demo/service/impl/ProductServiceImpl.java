@@ -5,7 +5,7 @@ import com.example.demo.repository.ProductRepository;
 import com.example.demo.service.ProductService;
 
 import java.util.List;
-@service
+@Service
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository repo;
