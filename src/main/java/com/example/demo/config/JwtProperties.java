@@ -1,13 +1,28 @@
 package com.example.demo.config;
 
-import lombok.Getter;
-import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
-@Getter
-@Setter
+@Configuration
+@ConfigurationProperties(prefix = "jwt")
 public class JwtProperties {
 
-    // these fields are set via reflection in tests
     private String secret;
-    private Long expirationMs;
+    private long expirationMs;
+
+    public String getSecret() {
+        return secret;
+    }
+
+    public void setSecret(String secret) {
+        this.secret = secret;
+    }
+
+    public long getExpirationMs() {
+        return expirationMs;
+    }
+
+    public void setExpirationMs(long expirationMs) {
+        this.expirationMs = expirationMs;
+    }
 }
