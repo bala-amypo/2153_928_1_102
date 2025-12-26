@@ -1,8 +1,8 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.AuthRequest;
-import com.example.demo.dto.AuthResponse;
 import com.example.demo.dto.RegisterRequest;
+import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -19,18 +19,14 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(
-            @Valid @RequestBody RegisterRequest request) {
-
-        return ResponseEntity.ok(userService.register(request));
+    public ResponseEntity<User> register(@Valid @RequestBody RegisterRequest request) {
+        User user = userService.registerUser(request); // <-- updated method name
+        return ResponseEntity.ok(user);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(
-            @Valid @RequestBody AuthRequest request) {
-
-        return ResponseEntity.ok(
-                userService.loginAndGenerateToken(request)
-        );
+    public ResponseEntity<String> login(@Valid @RequestBody AuthRequest request) {
+        String token = userService.loginAndGenerateToken(request);
+        return ResponseEntity.ok(token);
     }
 }
