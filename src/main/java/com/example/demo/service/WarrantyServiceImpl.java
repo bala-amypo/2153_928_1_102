@@ -1,166 +1,60 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.entity.Product;
+import com.example.demo.entity.User;
 import com.example.demo.entity.Warranty;
+import com.example.demo.repository.ProductRepository;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.repository.WarrantyRepository;
 import com.example.demo.service.WarrantyService;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
 public class WarrantyServiceImpl implements WarrantyService {
 
-    private final WarrantyRepository repo;
+    private final WarrantyRepository warrantyRepository;
+    private final UserRepository userRepository;
+    private final ProductRepository productRepository;
 
-    public WarrantyServiceImpl(WarrantyRepository repo) {
-        this.repo = repo;
+    public WarrantyServiceImpl(WarrantyRepository warrantyRepository,
+                               UserRepository userRepository,
+                               ProductRepository productRepository) {
+        this.warrantyRepository = warrantyRepository;
+        this.userRepository = userRepository;
+        this.productRepository = productRepository;
     }
 
     @Override
-    public Warranty registerWarranty(Warranty warranty) {
+    public Warranty registerWarranty(Long userId, Long productId, Warranty warranty) {
 
-        //Expiry date must be after purchase date
-        if (warranty.getExpiryDate().isBefore(warranty.getPurchaseDate())) {
-            throw new RuntimeException("Expiry date must be after purchase date");
+        if (!warranty.getExpiryDate().isAfter(warranty.getPurchaseDate())) {
+            throw new IllegalArgumentException("Expiry date must be after purchase date");
         }
 
-        // Serial number must be unique
-        if (repo.existsBySerialNumber(warranty.getSerialNumber())) {
-            throw new RuntimeException("Serial number must be unique");
+        if (warrantyRepository.existsBySerialNumber(warranty.getSerialNumber())) {
+            throw new IllegalArgumentException("Serial number must be unique");
         }
 
-        return repo.save(warranty);
+        User user = userRepository.findById(userId)
+                .orElseThrow(RuntimeException::new);
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(RuntimeException::new);
+
+        warranty.setUser(user);
+        warranty.setProduct(product);
+
+        return warrantyRepository.save(warranty);
     }
 
     @Override
-    public Warranty getWarrantyById(Long id) {
-        return repo.findById(id).orElseThrow(() ->
-                        new RuntimeException("Warranty not found"));
+    public List<Warranty> getUserWarranties(Long userId) {
+        return warrantyRepository.findByUserId(userId);
     }
 
     @Override
-    public List<Warranty> getWarrantiesByUser(Long userId) {
-        return repo.findByUserId(userId);
-    }
-}
-package com.example.demo.service;
-
-import com.example.demo.entity.Warranty;
-import java.util.List;
-
-public interface WarrantyService {
-
-    Warranty registerWarranty(Warranty warranty);
-
-    Warranty getWarrantyById(Long id);
-
-    List<Warranty> getWarrantiesByUser(Long userId);
-}
-package com.example.demo.repository;
-
-import com.example.demo.entity.Warranty;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-
-import java.time.LocalDate;
-import java.util.List;
-
-public interface WarrantyRepository extends JpaRepository<Warranty, Long> {
-
-    boolean existsBySerialNumber(String serialNumber);
-
-    List<Warranty> findByUserId(Long userId);
-
-    
-    @Query("SELECT w FROM Warranty w WHERE w.expiryDate BETWEEN :start AND :end")
-    List<Warranty> findWarrantiesExpiringBetween(
-            @Param("start") LocalDate start,
-            @Param("end") LocalDate end
-    );
-}
-package com.example.demo.entity;
-
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.*;
-import java.time.LocalDate;
-
-@Entity
-@Table(
-    name = "warranties",
-    uniqueConstraints = @UniqueConstraint(columnNames = "serialNumber")
-)
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Warranty {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @ManyToOne
-    @NotNull(message = "User must be provided")
-    private User user;
-
-    @ManyToOne
-    @NotNull(message = "Product must be provided")
-    private Product product;
-
-    @NotNull(message = "Purchase date is required")
-    private LocalDate purchaseDate;
-
-    @NotNull(message = "Expiry date is required")
-    private LocalDate expiryDate;
-
-    @NotBlank(message = "Serial number required")
-    @Column(unique = true)
-    private String serialNumber;
-}
-package com.example.demo.controller;
-
-import com.example.demo.entity.Warranty;
-import com.example.demo.service.WarrantyService;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-@RestController
-@RequestMapping("/warranties")
-public class WarrantyController {
-
-    private final WarrantyService service;
-
-    public WarrantyController(WarrantyService service) {
-        this.service = service;
-    }
-
-    
-    @PostMapping("/register/{userId}/{productId}")
-    public Warranty registerWarranty(
-            @PathVariable Long userId,
-            @PathVariable Long productId,
-            @RequestBody Warranty warranty) {
-
-        return service.registerWarranty(warranty);
-    }
-
-    
-    @GetMapping("/{warrantyId}")
-    public Warranty getWarranty(@PathVariable Long warrantyId) {
-        return service.getWarrantyById(warrantyId);
-    }
-
-   
-    @GetMapping("/user/{userId}")
-    public List<Warranty> getUserWarranties(
-            @PathVariable Long userId) {
-        return service.getWarrantiesByUser(userId);
+    public Warranty getWarranty(Long id) {
+        return warrantyRepository.findById(id)
+                .orElseThrow(RuntimeException::new);
     }
 }

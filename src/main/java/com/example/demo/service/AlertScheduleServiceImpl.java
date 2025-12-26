@@ -1,38 +1,41 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.AlertSchedule;
-import com.example.demo.entity.Warranty;
 import com.example.demo.repository.AlertScheduleRepository;
 import com.example.demo.repository.WarrantyRepository;
 import com.example.demo.service.AlertScheduleService;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
 public class AlertScheduleServiceImpl implements AlertScheduleService {
 
-    private final AlertScheduleRepository alertRepo;
-    private final WarrantyRepository warrantyRepo;
+    private final AlertScheduleRepository alertScheduleRepository;
+    private final WarrantyRepository warrantyRepository;
 
-    public AlertScheduleServiceImpl(AlertScheduleRepository alertRepo,
-                                    WarrantyRepository warrantyRepo) {
-        this.alertRepo = alertRepo;
-        this.warrantyRepo = warrantyRepo;
+    public AlertScheduleServiceImpl(AlertScheduleRepository alertScheduleRepository,
+                                    WarrantyRepository warrantyRepository) {
+        this.alertScheduleRepository = alertScheduleRepository;
+        this.warrantyRepository = warrantyRepository;
     }
 
     @Override
     public AlertSchedule createSchedule(Long warrantyId, AlertSchedule schedule) {
 
-        Warranty warranty = warrantyRepo.findById(warrantyId)
-                .orElseThrow(() -> new RuntimeException("Warranty not found"));
+        warrantyRepository.findById(warrantyId)
+                .orElseThrow(RuntimeException::new);
 
-        schedule.setWarranty(warranty);
-        return alertRepo.save(schedule);
+        if (schedule.getDaysBeforeExpiry() < 0) {
+            throw new IllegalArgumentException("daysBeforeExpiry invalid");
+        }
+
+        return alertScheduleRepository.save(schedule);
     }
 
     @Override
     public List<AlertSchedule> getSchedules(Long warrantyId) {
-        return alertRepo.findByWarrantyId(warrantyId);
+        warrantyRepository.findById(warrantyId)
+                .orElseThrow(RuntimeException::new);
+
+        return alertScheduleRepository.findByWarrantyId(warrantyId);
     }
 }

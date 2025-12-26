@@ -1,107 +1,32 @@
 package com.example.demo.service.impl;
 
-import org.springframework.stereotype.Service;
-import java.util.List;
 import com.example.demo.entity.Product;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.service.ProductService;
 
-@Service
+import java.util.List;
+
 public class ProductServiceImpl implements ProductService {
 
-    private final ProductRepository repo;
+    private final ProductRepository productRepository;
 
-    public ProductServiceImpl(ProductRepository repo) {
-        this.repo = repo;
+    public ProductServiceImpl(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     @Override
-    public Product saveProduct(Product product) {
-        return repo.save(product);
+    public Product addProduct(Product product) {
+        if (product.getModelNumber() == null || product.getModelNumber().isEmpty()) {
+            throw new IllegalArgumentException("Model number required");
+        }
+        if (product.getCategory() == null || product.getCategory().isEmpty()) {
+            throw new IllegalArgumentException("Category required");
+        }
+        return productRepository.save(product);
     }
 
     @Override
     public List<Product> getAllProducts() {
-        return repo.findAll();
-    }
-}
-package com.example.demo.service;
-
-import com.example.demo.entity.Product;
-import java.util.List;
-
-public interface ProductService {
-
-    Product saveProduct(Product product);
-
-    List<Product> getAllProducts();
-}
-package com.example.demo.repository;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-import com.example.demo.entity.Product;
-
-public interface ProductRepository extends JpaRepository<Product, Long> {
-}
-package com.example.demo.entity;
-
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.*;
-
-@Entity
-@Table(name = "products")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Product {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String name;
-
-    private String brand;
-
-    @NotBlank(message = "Model number required")
-    private String modelNumber;
-
-    @NotBlank(message = "Category required")
-    private String category;
-}
-package com.example.demo.controller;
-
-import com.example.demo.entity.Product;
-import com.example.demo.service.ProductService;
-import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-@RestController
-@RequestMapping("/products")
-public class ProductController {
-
-    private final ProductService productService;
-
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
-
-    
-    @PostMapping
-    public Product addProduct(@Valid @RequestBody Product product) {
-        return productService.saveProduct(product);
-    }
-
-   
-    @GetMapping
-    public List<Product> getProducts() {
-        return productService.getAllProducts();
+        return productRepository.findAll();
     }
 }
