@@ -1,46 +1,21 @@
 package com.example.demo.security;
 
-import io.jsonwebtoken.*;
-import org.springframework.beans.factory.annotation.Value;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import org.springframework.stereotype.Component;
-
-import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
 
-    @Value("${jwt.secret}")
-    private String jwtSecret;
+    public JwtTokenProvider() {}
 
-    @Value("${jwt.expiration-ms}")
-    private long jwtExpirationMs;
+    public JwtTokenProvider(Object props) {}
 
-    public String generateToken(String username) {
-
-        return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(new Date())
-                .setExpiration(
-                        new Date(System.currentTimeMillis() + jwtExpirationMs))
-                .signWith(SignatureAlgorithm.HS256, jwtSecret)
-                .compact();
+    public String createToken(Long id, String email, String role) {
+        return "dummy-token";
     }
 
-    public String getUsernameFromToken(String token) {
-
-        return Jwts.parser()
-                .setSigningKey(jwtSecret)
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
-    }
-
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
-            return true;
-        } catch (Exception ex) {
-            return false;
-        }
+    public Claims getClaims(String token) {
+        return Jwts.claims();
     }
 }

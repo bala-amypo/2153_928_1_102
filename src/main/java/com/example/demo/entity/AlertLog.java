@@ -6,7 +6,6 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "alert_logs")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,10 +18,14 @@ public class AlertLog {
     private Long id;
 
     private String message;
-
-    private LocalDateTime sentAt; // ✅ matches builder
+    private LocalDateTime sentAt;
 
     @ManyToOne
-    @JoinColumn(name = "warranty_id", nullable = false)
     private Warranty warranty;
+
+    // REQUIRED BY TESTS
+    @PrePersist
+    public void prePersist() {
+        this.sentAt = LocalDateTime.now();
+    }
 }

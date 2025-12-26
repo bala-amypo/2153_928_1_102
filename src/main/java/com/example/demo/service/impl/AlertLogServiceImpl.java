@@ -7,7 +7,6 @@ import com.example.demo.repository.WarrantyRepository;
 import com.example.demo.service.AlertLogService;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -30,7 +29,6 @@ public class AlertLogServiceImpl implements AlertLogService {
 
         AlertLog log = AlertLog.builder()
                 .message(message)
-                .sentAt(LocalDateTime.now())
                 .warranty(warranty)
                 .build();
 

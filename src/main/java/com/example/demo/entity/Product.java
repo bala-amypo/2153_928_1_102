@@ -3,12 +3,9 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
-
 @Entity
-@Table(name = "products")
 @Getter
-@Setter   // ✅ REQUIRED
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -18,13 +15,11 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private String name;
-
     private String brand;
 
-    private Integer warrantyPeriodMonths; // getter generated
+    private String modelNumber;      // REQUIRED
+    private String category;         // REQUIRED
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private List<Warranty> warranties;
+    private Integer warrantyPeriodMonths;
 }
