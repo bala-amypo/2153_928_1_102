@@ -19,27 +19,27 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-            // Disable CSRF for APIs & tests
-            .csrf(csrf -> csrf.disable())
+                // Disable CSRF (REST API)
+                .csrf(csrf -> csrf.disable())
 
-            // Disable session (JWT based)
-            .sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            )
+                // Stateless session (JWT based)
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
 
-            // Allow ALL requests (IMPORTANT for test cases)
-            .authorizeHttpRequests(auth ->
-                auth.anyRequest().permitAll()
-            )
+                // Permit all requests (IMPORTANT for test cases)
+                .authorizeHttpRequests(auth ->
+                        auth.anyRequest().permitAll()
+                )
 
-            // Allow H2 console
-            .headers(headers ->
-                headers.frameOptions(frame -> frame.disable())
-            )
+                // Enable H2 Console
+                .headers(headers ->
+                        headers.frameOptions(frame -> frame.disable())
+                )
 
-            // Disable default login
-            .formLogin(form -> form.disable())
-            .httpBasic(basic -> basic.disable());
+                // Disable default auth UI
+                .formLogin(form -> form.disable())
+                .httpBasic(basic -> basic.disable());
 
         return http.build();
     }
@@ -52,6 +52,7 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration configuration) throws Exception {
+
         return configuration.getAuthenticationManager();
     }
 }
