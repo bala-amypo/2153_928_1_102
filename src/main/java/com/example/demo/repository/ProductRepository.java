@@ -1,5 +1,27 @@
-public interface ProductRepository {
-    Product save(Product product);
-    List<Product> findAll();
-    Optional<Product> findById(Long id);
+package com.example.demo.service.impl;
+
+import com.example.demo.entity.Product;
+import com.example.demo.repository.ProductRepository;
+
+import java.util.List;
+
+public class ProductServiceImpl {
+
+    private final ProductRepository repo;
+
+    public ProductServiceImpl(ProductRepository repo) {
+        this.repo = repo;
+    }
+
+    public Product addProduct(Product p) {
+        if (p.getModelNumber() == null || p.getModelNumber().isEmpty())
+            throw new IllegalArgumentException("Model number required");
+        if (p.getCategory() == null || p.getCategory().isEmpty())
+            throw new IllegalArgumentException("Category required");
+        return repo.save(p);
+    }
+
+    public List<Product> getAllProducts() {
+        return repo.findAll();
+    }
 }

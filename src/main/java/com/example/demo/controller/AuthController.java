@@ -1,40 +1,33 @@
 package com.example.demo.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import com.example.demo.dto.UserDTO;
+import com.example.demo.entity.User;
+import com.example.demo.service.impl.UserServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.demo.entity.User;
-import com.example.demo.service.UserService;
-
 @RestController
-@RequestMapping("/auth")
-public class AuthController {
+@RequestMapping("/api/users")
+public class UserController {
 
-    private final UserService userService;
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final UserServiceImpl userService;
 
-    @Autowired
-    public AuthController(UserService userService) {
+    public UserController(UserServiceImpl userService) {
         this.userService = userService;
     }
 
-    
     @PostMapping("/register")
-    public User register(@RequestBody User user) {
-        return userService.register(user);
+    public User register(@RequestBody UserDTO dto) {
+        User u = User.builder()
+                .name(dto.getName())
+                .email(dto.getEmail())
+                .password(dto.getPassword())
+                .role(dto.getRole())
+                .build();
+        return userService.register(u);
     }
 
-    
-    @PostMapping("/login")
-    public String login(@RequestBody User user) {
-
-        User dbUser = userService.findByEmail(user.getEmail());
-
-        if (dbUser == null || !passwordEncoder.matches(user.getPassword(), dbUser.getPassword())) {
-            return "Invalid credentials";
-        }
-
-        return "Login successful";
+    @GetMapping("/email/{email}")
+    public User getByEmail(@PathVariable String email) {
+        return userService.findByEmail(email);
     }
 }
