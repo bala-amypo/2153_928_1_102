@@ -1,54 +1,30 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.AuthRequest;
-import com.example.demo.dto.AuthResponse;
+import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.RegisterRequest;
-import com.example.demo.entity.User;
-import com.example.demo.security.JwtTokenProvider;
-import com.example.demo.service.impl.UserServiceImpl;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import com.example.demo.dto.UserResponse;
+import com.example.demo.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final UserServiceImpl userService;
-    private final JwtTokenProvider jwtProvider;
-    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+    private final UserService userService;
 
-    public AuthController(UserServiceImpl userService,
-                          JwtTokenProvider jwtProvider) {
+    public AuthController(UserService userService) {
         this.userService = userService;
-        this.jwtProvider = jwtProvider;
     }
 
+    // ✅ REGISTER
     @PostMapping("/register")
-    public User register(@RequestBody RegisterRequest req) {
-        User user = User.builder()
-                .name(req.getName())
-                .email(req.getEmail())
-                .password(req.getPassword())
-                .role("USER")
-                .build();
-        return userService.register(user);
+    public UserResponse register(@RequestBody RegisterRequest request) {
+        return userService.register(request);
     }
 
+    // ✅ LOGIN (JWT)
     @PostMapping("/login")
-    public AuthResponse login(@RequestBody AuthRequest req) {
-        User user = userService.findByEmail(req.getEmail());
-
-        if (!encoder.matches(req.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
-        }
-
-        String token = jwtProvider.createToken(
-                user.getId(),
-                user.getEmail(),
-                user.getRole()
-        );
-
-        return new AuthResponse(token);
+    public String login(@RequestBody LoginRequest request) {
+        return userService.loginAndGenerateToken(request);
     }
-    
 }
