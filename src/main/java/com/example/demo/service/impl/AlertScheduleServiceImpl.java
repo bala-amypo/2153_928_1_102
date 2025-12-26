@@ -2,12 +2,12 @@ package com.example.demo.service.impl;
 
 import com.example.demo.entity.AlertSchedule;
 import com.example.demo.entity.Warranty;
-import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.AlertScheduleRepository;
 import com.example.demo.repository.WarrantyRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-import org.springframework.stereotype.Service;
+
 @Service
 public class AlertScheduleServiceImpl {
 
@@ -20,12 +20,10 @@ public class AlertScheduleServiceImpl {
         this.warrantyRepository = warrantyRepository;
     }
 
-    public AlertSchedule createSchedule(Long warrantyId,
-                                        AlertSchedule schedule) {
+    public AlertSchedule createSchedule(Long warrantyId, AlertSchedule schedule) {
 
         Warranty warranty = warrantyRepository.findById(warrantyId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Warranty not found"));
+                .orElseThrow(() -> new RuntimeException("Warranty not found"));
 
         if (schedule.getDaysBeforeExpiry() < 0) {
             throw new IllegalArgumentException("daysBeforeExpiry");
@@ -39,8 +37,7 @@ public class AlertScheduleServiceImpl {
     public List<AlertSchedule> getSchedules(Long warrantyId) {
 
         warrantyRepository.findById(warrantyId)
-                .orElseThrow(() ->
-                        new RuntimeException("Warranty not found"));
+                .orElseThrow(() -> new RuntimeException("Warranty not found"));
 
         return alertScheduleRepository.findByWarrantyId(warrantyId);
     }

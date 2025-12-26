@@ -2,11 +2,12 @@ package com.example.demo.service.impl;
 
 import com.example.demo.entity.AlertLog;
 import com.example.demo.entity.Warranty;
-import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.AlertLogRepository;
 import com.example.demo.repository.WarrantyRepository;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
+
 @Service
 public class AlertLogServiceImpl {
 
@@ -22,8 +23,7 @@ public class AlertLogServiceImpl {
     public AlertLog addLog(Long warrantyId, String message) {
 
         Warranty warranty = warrantyRepository.findById(warrantyId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Warranty not found"));
+                .orElseThrow(() -> new RuntimeException("Warranty not found"));
 
         AlertLog log = AlertLog.builder()
                 .warranty(warranty)
@@ -36,8 +36,7 @@ public class AlertLogServiceImpl {
     public List<AlertLog> getLogs(Long warrantyId) {
 
         warrantyRepository.findById(warrantyId)
-                .orElseThrow(() ->
-                        new RuntimeException("Warranty not found"));
+                .orElseThrow(() -> new RuntimeException("Warranty not found"));
 
         return alertLogRepository.findByWarrantyId(warrantyId);
     }

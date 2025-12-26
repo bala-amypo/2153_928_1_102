@@ -2,11 +2,11 @@ package com.example.demo.service.impl;
 
 import com.example.demo.entity.Product;
 import com.example.demo.repository.ProductRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-import org.springframework.stereotype.Service;
-@Service
 
+@Service
 public class ProductServiceImpl {
 
     private final ProductRepository productRepository;
@@ -17,13 +17,11 @@ public class ProductServiceImpl {
 
     public Product addProduct(Product product) {
 
-        if (product.getModelNumber() == null
-                || product.getModelNumber().isBlank()) {
+        if (product.getModelNumber() == null || product.getModelNumber().isBlank()) {
             throw new IllegalArgumentException("Model number required");
         }
 
-        if (product.getCategory() == null
-                || product.getCategory().isBlank()) {
+        if (product.getCategory() == null || product.getCategory().isBlank()) {
             throw new IllegalArgumentException("Category required");
         }
 

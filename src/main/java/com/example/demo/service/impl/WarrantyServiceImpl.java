@@ -9,10 +9,9 @@ import com.example.demo.repository.WarrantyRepository;
 import com.example.demo.service.WarrantyService;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 
-@Service   // ⭐ REQUIRED
+@Service
 public class WarrantyServiceImpl implements WarrantyService {
 
     private final WarrantyRepository warrantyRepository;
@@ -36,8 +35,8 @@ public class WarrantyServiceImpl implements WarrantyService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        if (warranty.getExpiryDate().isBefore(warranty.getPurchaseDate())
-                || warranty.getExpiryDate().isEqual(warranty.getPurchaseDate())) {
+        if (warranty.getPurchaseDate() == null || warranty.getExpiryDate() == null
+                || !warranty.getExpiryDate().isAfter(warranty.getPurchaseDate())) {
             throw new IllegalArgumentException("Expiry date must be after purchase date");
         }
 
