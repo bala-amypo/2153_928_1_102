@@ -20,9 +20,14 @@ public class AlertLog {
 
     private String message;
 
-    private LocalDateTime sentAt;
+    private LocalDateTime createdAt;
 
     @ManyToOne
-    @JoinColumn(name = "warranty_id", nullable = false)
+    @JoinColumn(name = "warranty_id")
     private Warranty warranty;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
 }

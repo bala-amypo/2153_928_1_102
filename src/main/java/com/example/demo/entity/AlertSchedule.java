@@ -3,8 +3,6 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
-
 @Entity
 @Table(name = "alert_schedules")
 @Getter
@@ -18,13 +16,9 @@ public class AlertSchedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDate alertDate;
-
-    private String message;
-
-    private Boolean sent;
+    private int daysBeforeExpiry;
 
     @ManyToOne
-    @JoinColumn(name = "warranty_id", nullable = false)
+    @JoinColumn(name = "warranty_id")
     private Warranty warranty;
 }
