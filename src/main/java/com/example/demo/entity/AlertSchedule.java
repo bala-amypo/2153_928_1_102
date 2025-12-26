@@ -1,8 +1,15 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
+@Table(name = "alert_schedules")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class AlertSchedule {
 
     @Id
@@ -12,27 +19,7 @@ public class AlertSchedule {
     @ManyToOne
     private Warranty warranty;
 
-    private boolean sent;
+    private Integer daysBeforeExpiry;
 
-    // ---- GETTERS & SETTERS ----
-
-    public Long getId() {
-        return id;
-    }
-
-    public Warranty getWarranty() {
-        return warranty;
-    }
-
-    public void setWarranty(Warranty warranty) {
-        this.warranty = warranty;
-    }
-
-    public boolean isSent() {
-        return sent;
-    }
-
-    public void setSent(boolean sent) {
-        this.sent = sent;
-    }
+    private Boolean enabled;
 }
