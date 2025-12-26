@@ -9,7 +9,8 @@ import com.example.demo.repository.UserRepository;
 import com.example.demo.repository.WarrantyRepository;
 
 import java.util.List;
-
+import org.springframework.stereotype.Service;
+@Service
 public class WarrantyServiceImpl {
 
     private final WarrantyRepository warrantyRepository;
