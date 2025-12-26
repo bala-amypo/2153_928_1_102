@@ -7,18 +7,18 @@ import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
 import com.example.demo.security.JwtTokenProvider;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder; // Use interface
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder; // Changed from BCryptPasswordEncoder
     private final JwtTokenProvider jwtTokenProvider;
 
     public UserServiceImpl(UserRepository userRepository,
-                           BCryptPasswordEncoder passwordEncoder,
+                           PasswordEncoder passwordEncoder, // Use interface
                            JwtTokenProvider jwtTokenProvider) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setPassword(passwordEncoder.encode(request.getPassword())); // Works fine
         user.setRole("USER");
         return userRepository.save(user);
     }
