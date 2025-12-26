@@ -10,6 +10,8 @@ import com.example.demo.security.JwtTokenProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -17,7 +19,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
-    // Constructor injection (required for tests and Spring DI)
+    // Constructor injection
     public UserServiceImpl(UserRepository userRepository,
                            PasswordEncoder passwordEncoder,
                            JwtTokenProvider jwtTokenProvider) {
@@ -26,6 +28,7 @@ public class UserServiceImpl implements UserService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
+    // Register a new user
     @Override
     public User registerUser(RegisterRequest request) {
         User user = new User();
@@ -36,6 +39,13 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
+    // Find user by email (needed for tests)
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    // Login and generate JWT token
     @Override
     public String loginAndGenerateToken(AuthRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
