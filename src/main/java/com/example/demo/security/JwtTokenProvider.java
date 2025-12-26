@@ -48,21 +48,20 @@ public class JwtTokenProvider {
         }
     }
     
-    public Claims getClaims(String token) {
+    public Jws<Claims> getClaims(String token) {  // Changed return type
         return Jwts.parserBuilder()
             .setSigningKey(secretKey)
             .build()
-            .parseClaimsJws(token)
-            .getBody();
+            .parseClaimsJws(token);
     }
     
     public String getEmailFromToken(String token) {
-        Claims claims = getClaims(token);
-        return claims.get("email", String.class);
+        Jws<Claims> jws = getClaims(token);
+        return jws.getBody().get("email", String.class);  // Fixed this line
     }
     
     public Long getUserIdFromToken(String token) {
-        Claims claims = getClaims(token);
-        return claims.get("userId", Long.class);
+        Jws<Claims> jws = getClaims(token);
+        return jws.getBody().get("userId", Long.class);  // Fixed this line
     }
 }

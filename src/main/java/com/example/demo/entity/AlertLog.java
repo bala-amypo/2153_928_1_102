@@ -28,7 +28,7 @@ public class AlertLog {
     private Warranty warranty;
     
     @PrePersist
-    private void prePersist() {
+    public void prePersist() {  // Changed from private to public
         if (sentAt == null) {
             sentAt = LocalDateTime.now();
         }
