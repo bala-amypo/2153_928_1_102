@@ -20,4 +20,12 @@ public class AlertSchedule {
 
     @ManyToOne
     private Warranty warranty;
+
+    // Custom builder method for 'enabled'
+    public static class AlertScheduleBuilder {
+        public AlertScheduleBuilder enabled(boolean enabled) {
+            this.sent = !enabled; // assuming 'sent' = false when enabled
+            return this;
+        }
+    }
 }

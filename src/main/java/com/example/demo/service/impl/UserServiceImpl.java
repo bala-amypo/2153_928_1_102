@@ -10,8 +10,6 @@ import com.example.demo.security.JwtTokenProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -19,7 +17,6 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
-    // Constructor injection
     public UserServiceImpl(UserRepository userRepository,
                            PasswordEncoder passwordEncoder,
                            JwtTokenProvider jwtTokenProvider) {
@@ -28,7 +25,6 @@ public class UserServiceImpl implements UserService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    // Register a new user
     @Override
     public User registerUser(RegisterRequest request) {
         User user = new User();
@@ -39,22 +35,25 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-    // Find user by email (needed for tests)
     @Override
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public User register(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userRepository.save(user);
     }
 
-    // Login and generate JWT token
     @Override
     public String loginAndGenerateToken(AuthRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                     .orElseThrow(() -> new RuntimeException("User not found"));
-
+                .orElseThrow(() -> new RuntimeException("User not found"));
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
-
         return jwtTokenProvider.generateToken(user.getEmail());
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 }
