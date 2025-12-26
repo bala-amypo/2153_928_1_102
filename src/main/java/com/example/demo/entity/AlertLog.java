@@ -1,23 +1,19 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
-@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class AlertLog {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String message;
     private LocalDateTime alertTime;
 
-    @ManyToOne
-    private Warranty warranty;
+    // Required by service for saving alert timestamp
+    public void prePersist() {
+        this.alertTime = LocalDateTime.now();
+    }
 }
