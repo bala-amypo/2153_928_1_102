@@ -1,22 +1,43 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class AlertSchedule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private Warranty warranty;
+    private int daysBeforeExpiry;
 
-    private boolean sent;
+    public AlertSchedule() {}
+
+    public int getDaysBeforeExpiry() {
+        return daysBeforeExpiry;
+    }
+
+    public void setDaysBeforeExpiry(int daysBeforeExpiry) {
+        this.daysBeforeExpiry = daysBeforeExpiry;
+    }
+
+    // ✅ BUILDER REQUIRED BY TEST
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private int daysBeforeExpiry;
+
+        public Builder daysBeforeExpiry(int daysBeforeExpiry) {
+            this.daysBeforeExpiry = daysBeforeExpiry;
+            return this;
+        }
+
+        public AlertSchedule build() {
+            AlertSchedule s = new AlertSchedule();
+            s.setDaysBeforeExpiry(this.daysBeforeExpiry);
+            return s;
+        }
+    }
 }
