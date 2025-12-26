@@ -4,7 +4,7 @@ import com.example.demo.entity.Product;
 import java.util.List;
 
 
-@Service 
+@service 
 public interface ProductService {
     Product addProduct(Product product);
     List<Product> getAllProducts();

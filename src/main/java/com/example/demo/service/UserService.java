@@ -3,7 +3,7 @@ package com.example.demo.service;
 import com.example.demo.entity.User;
 
 
-@Service 
+@service 
 public interface UserService {
     User register(User user);
     User findByEmail(String email);
