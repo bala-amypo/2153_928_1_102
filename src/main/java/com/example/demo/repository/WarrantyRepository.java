@@ -6,5 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface WarrantyRepository extends JpaRepository<Warranty, Long> {
+
     List<Warranty> findByUserId(Long userId);
+
+    List<Warranty> findByStatus(String status);
 }

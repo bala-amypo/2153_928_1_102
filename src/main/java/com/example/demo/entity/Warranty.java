@@ -19,6 +19,8 @@ public class Warranty {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String serialNumber;
+
     private LocalDate purchaseDate;
 
     private LocalDate expiryDate;
@@ -26,11 +28,11 @@ public class Warranty {
     private String status;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
+    @JoinColumn(name = "product_id")
     private Product product;
 
     @OneToMany(mappedBy = "warranty", cascade = CascadeType.ALL)
