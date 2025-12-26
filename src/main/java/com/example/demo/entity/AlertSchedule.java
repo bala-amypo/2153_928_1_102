@@ -1,8 +1,9 @@
-// src/main/java/com/example/demo/entity/AlertSchedule.java
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "alert_schedules")
@@ -12,26 +13,18 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class AlertSchedule {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @Column(nullable = false)
-    private Integer daysBeforeExpiry;
-    
-    @Column(nullable = false)
-    @Builder.Default
-    private Boolean enabled = true;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
+
+    private LocalDate alertDate;
+
+    private String message;
+
+    private Boolean sent;
+
+    @ManyToOne
     @JoinColumn(name = "warranty_id", nullable = false)
     private Warranty warranty;
-    
-    @PrePersist
-    @PreUpdate
-    private void validateDaysBeforeExpiry() {
-        if (daysBeforeExpiry < 0) {
-            throw new IllegalArgumentException("daysBeforeExpiry must be non-negative");
-        }
-    }
 }
