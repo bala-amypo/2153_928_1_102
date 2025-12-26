@@ -29,4 +29,18 @@ public class UserServiceImpl implements UserService {
         return repo.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
+
+    @Override
+public String loginAndGenerateToken(LoginRequest request) {
+
+    User user = userRepository.findByEmail(request.getEmail());
+
+    if (user == null ||
+        !passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        throw new RuntimeException("Invalid credentials");
+    }
+
+    return jwtUtil.generateToken(user.getEmail());
+}
+
 }
