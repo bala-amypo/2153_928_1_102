@@ -17,7 +17,7 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder; // Add this injection
     
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("Email is required");
         }
         
-        // Encode password
+        // Encode password - now passwordEncoder is properly injected
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         
         return userRepository.save(user);
