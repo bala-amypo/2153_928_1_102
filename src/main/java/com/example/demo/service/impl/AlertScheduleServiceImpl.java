@@ -5,6 +5,7 @@ import com.example.demo.entity.Warranty;
 import com.example.demo.repository.AlertScheduleRepository;
 import com.example.demo.repository.WarrantyRepository;
 import com.example.demo.service.AlertScheduleService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 @Service
