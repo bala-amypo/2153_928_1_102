@@ -2,22 +2,19 @@ package com.example.demo.security;
 
 import com.example.demo.config.JwtProperties;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
 
-import java.security.Key;
 import java.util.Date;
 
 public class JwtTokenProvider {
 
     private final JwtProperties properties;
-    private final Key key;
 
     public JwtTokenProvider(JwtProperties properties) {
         this.properties = properties;
-        this.key = Keys.hmacShaKeyFor(properties.getSecret().getBytes());
     }
 
     public String createToken(Long userId, String email, String role) {
+
         Claims claims = Jwts.claims();
         claims.put("userId", userId.intValue()); // tests expect Integer
         claims.put("email", email);
@@ -30,7 +27,7 @@ public class JwtTokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(expiry)
-                .signWith(key, SignatureAlgorithm.HS256)
+                .signWith(SignatureAlgorithm.HS256, properties.getSecret())
                 .compact();
     }
 
@@ -38,15 +35,14 @@ public class JwtTokenProvider {
         try {
             getClaims(token);
             return true;
-        } catch (Exception ex) {
+        } catch (Exception e) {
             return false;
         }
     }
 
     public Jws<Claims> getClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
+        return Jwts.parser()
+                .setSigningKey(properties.getSecret())
                 .parseClaimsJws(token);
     }
 }
