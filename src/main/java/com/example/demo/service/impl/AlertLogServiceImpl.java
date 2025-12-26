@@ -5,9 +5,9 @@ import com.example.demo.entity.Warranty;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.AlertLogRepository;
 import com.example.demo.repository.WarrantyRepository;
-
+import org.springframework.stereotype.Service;
 import java.util.List;
-
+@Service
 public class AlertLogServiceImpl {
 
     private final AlertLogRepository alertLogRepository;
