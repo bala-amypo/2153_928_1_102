@@ -1,71 +1,53 @@
-package com.example.demo.config;
+package com.example.demo.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableWebSecurity  // Enables Spring Security’s web security support
 public class SecurityConfig {
 
-    /**
-     * Configure the SecurityFilterChain for HTTP security.
-     * This replaces the older WebSecurityConfigurerAdapter approach.
-     */
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-            // Disable CSRF since this is a REST API
             .csrf(csrf -> csrf.disable())
-
-            // Stateless session management because JWT is used
             .sessionManagement(session ->
-                    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                    .requestMatchers(
+                            "/auth/**",
+                            "/swagger-ui/**",
+                            "/v3/api-docs/**")
+                    .permitAll()
+                    .anyRequest().authenticated()
             )
-
-            // Permit all requests (useful during development and for testing)
-            .authorizeHttpRequests(auth ->
-                    auth.anyRequest().permitAll()
-            )
-
-            // Allow H2 database console frames
-            .headers(headers ->
-                    headers.frameOptions(frame -> frame.disable())
-            )
-
-            // Disable default login form
-            .formLogin(form -> form.disable())
-
-            // Disable HTTP Basic authentication
-            .httpBasic(basic -> basic.disable());
+            .addFilterBefore(jwtAuthenticationFilter,
+                    UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    /**
-     * Bean for password encoding.
-     * BCrypt is the recommended encoder for storing passwords securely.
-     */
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    /**
-     * Bean to provide AuthenticationManager.
-     * Needed if you plan to authenticate users manually (e.g., in a login service).
-     */
     @Bean
     public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration configuration) throws Exception {
-        return configuration.getAuthenticationManager();
+            AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 }
