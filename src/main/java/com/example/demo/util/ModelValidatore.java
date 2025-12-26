@@ -1,6 +1,6 @@
 package com.example.demo.util;
 
-public class ModelValidator {
+public class ModelValidatore{
 
     private ModelValidator() {
         // Utility class – prevent object creation
