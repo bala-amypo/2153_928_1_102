@@ -1,11 +1,21 @@
 package com.example.demo.entity;
 
+import jakarta.persistence.*;
 import lombok.*;
 
-@Getter @Setter
-@AllArgsConstructor @NoArgsConstructor @Builder
+@Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class AlertSchedule {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Integer daysBeforeExpiry;
-    private Boolean enabled;
+
+    private int daysBeforeExpiry;
+
+    @ManyToOne
+    private Warranty warranty;
 }
