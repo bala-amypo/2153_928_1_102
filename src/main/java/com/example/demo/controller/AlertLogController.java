@@ -1,34 +1,28 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.AlertLog;
-import com.example.demo.service.impl.AlertLogServiceImpl;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import com.example.demo.service.AlertLogService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/logs")
-@Tag(name = "Alert Logs")
+@RequestMapping("/api/alerts")
 public class AlertLogController {
 
-    private final AlertLogServiceImpl logService;
+    private final AlertLogService alertLogService;
 
-    public AlertLogController(AlertLogServiceImpl logService) {
-        this.logService = logService;
+    public AlertLogController(AlertLogService alertLogService) {
+        this.alertLogService = alertLogService;
     }
 
-    @PostMapping("/{warrantyId}")
-    @Operation(summary = "Add alert log")
-    public AlertLog addLog(@PathVariable Long warrantyId,
-                           @RequestParam String message) {
-        return logService.addLog(warrantyId, message);
+    @GetMapping
+    public List<AlertLog> getAllAlerts() {
+        return alertLogService.getAllAlerts();
     }
 
-    @GetMapping("/{warrantyId}")
-    @Operation(summary = "Get alert logs")
-    public List<AlertLog> getLogs(@PathVariable Long warrantyId) {
-        return logService.getLogs(warrantyId);
+    @GetMapping("/user/{userId}")
+    public List<AlertLog> getAlertsByUser(@PathVariable Long userId) {
+        return alertLogService.getAlertsByUser(userId);
     }
 }

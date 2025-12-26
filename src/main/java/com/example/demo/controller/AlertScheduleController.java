@@ -1,34 +1,48 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.AlertSchedule;
-import com.example.demo.service.impl.AlertScheduleServiceImpl;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import com.example.demo.service.AlertScheduleService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/schedules")
-@Tag(name = "Alert Schedules")
+@RequestMapping("/api/alert-schedules")
 public class AlertScheduleController {
 
-    private final AlertScheduleServiceImpl scheduleService;
+    private final AlertScheduleService alertScheduleService;
 
-    public AlertScheduleController(AlertScheduleServiceImpl scheduleService) {
-        this.scheduleService = scheduleService;
+    public AlertScheduleController(AlertScheduleService alertScheduleService) {
+        this.alertScheduleService = alertScheduleService;
     }
 
-    @PostMapping("/{warrantyId}")
-    @Operation(summary = "Create alert schedule")
-    public AlertSchedule createSchedule(@PathVariable Long warrantyId,
-                                        @RequestBody AlertSchedule schedule) {
-        return scheduleService.createSchedule(warrantyId, schedule);
+    // Create Alert Schedule
+    @PostMapping
+    public ResponseEntity<AlertSchedule> createAlertSchedule(
+            @RequestBody AlertSchedule alertSchedule) {
+
+        AlertSchedule saved = alertScheduleService.createAlertSchedule(alertSchedule);
+        return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{warrantyId}")
-    @Operation(summary = "Get schedules for warranty")
-    public List<AlertSchedule> getSchedules(@PathVariable Long warrantyId) {
-        return scheduleService.getSchedules(warrantyId);
+    // Get All Alert Schedules
+    @GetMapping
+    public ResponseEntity<List<AlertSchedule>> getAllAlertSchedules() {
+        return ResponseEntity.ok(alertScheduleService.getAllAlertSchedules());
+    }
+
+    // Get Alert Schedule by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<AlertSchedule> getAlertScheduleById(@PathVariable Long id) {
+        return ResponseEntity.ok(alertScheduleService.getAlertScheduleById(id));
+    }
+
+    // Delete Alert Schedule
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAlertSchedule(@PathVariable Long id) {
+        alertScheduleService.deleteAlertSchedule(id);
+        return ResponseEntity.noContent().build();
     }
 }
