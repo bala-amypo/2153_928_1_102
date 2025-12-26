@@ -17,6 +17,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
+    // Constructor with all 3 dependencies
     public UserServiceImpl(UserRepository userRepository,
                            PasswordEncoder passwordEncoder,
                            JwtTokenProvider jwtTokenProvider) {
@@ -25,6 +26,7 @@ public class UserServiceImpl implements UserService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
+    // Register using DTO
     @Override
     public User registerUser(RegisterRequest request) {
         User user = new User();
@@ -35,22 +37,30 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
+    // Register using User entity (required by interface)
     @Override
     public User register(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (user.getRole() == null) {
+            user.setRole("USER");
+        }
         return userRepository.save(user);
     }
 
+    // Login and generate JWT
     @Override
     public String loginAndGenerateToken(AuthRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
+
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
+
         return jwtTokenProvider.generateToken(user.getEmail());
     }
 
+    // Find user by email
     @Override
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
