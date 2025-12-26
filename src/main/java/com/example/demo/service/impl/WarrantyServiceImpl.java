@@ -1,36 +1,43 @@
-package com.example.demo.controller;
+package com.example.demo.service.impl;
 
-import com.example.demo.entity.Warranty;
+import com.example.demo.entity.*;
+import com.example.demo.repository.*;
 import com.example.demo.service.WarrantyService;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/warranties")
-public class WarrantyController {
+public class WarrantyServiceImpl implements WarrantyService {
 
-    private final WarrantyService service;
+    private final WarrantyRepository warrantyRepo;
+    private final UserRepository userRepo;
+    private final ProductRepository productRepo;
 
-    public WarrantyController(WarrantyService service) {
-        this.service = service;
+    public WarrantyServiceImpl(WarrantyRepository w, UserRepository u, ProductRepository p) {
+        this.warrantyRepo = w;
+        this.userRepo = u;
+        this.productRepo = p;
     }
 
-    @PostMapping("/{userId}/{productId}")
-    public Warranty register(
-            @PathVariable Long userId,
-            @PathVariable Long productId,
-            @RequestBody Warranty warranty) {
-        return service.registerWarranty(userId, productId, warranty);
+    public Warranty registerWarranty(Long userId, Long productId, Warranty w) {
+
+        if (!w.getExpiryDate().isAfter(w.getPurchaseDate()))
+            throw new IllegalArgumentException("Expiry date must be after purchase date");
+
+        if (warrantyRepo.existsBySerialNumber(w.getSerialNumber()))
+            throw new IllegalArgumentException("Serial number must be unique");
+
+        w.setUser(userRepo.findById(userId).orElseThrow(RuntimeException::new));
+        w.setProduct(productRepo.findById(productId).orElseThrow(RuntimeException::new));
+
+        return warrantyRepo.save(w);
     }
 
-    @GetMapping("/user/{userId}")
-    public List<Warranty> getByUser(@PathVariable Long userId) {
-        return service.getUserWarranties(userId);
+    public List<Warranty> getUserWarranties(Long userId) {
+        return warrantyRepo.findByUserId(userId);
     }
 
-    @GetMapping("/{id}")
-    public Warranty getById(@PathVariable Long id) {
-        return service.getWarranty(id);
+    public Warranty getWarranty(Long id) {
+        return warrantyRepo.findById(id)
+                .orElseThrow(RuntimeException::new);
     }
 }
