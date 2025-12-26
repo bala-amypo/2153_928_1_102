@@ -1,13 +1,12 @@
 package com.example.demo.config;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+@ConfigurationProperties(prefix = "jwt")
 public class JwtProperties {
 
-    // MUST be named exactly like this (tests use reflection)
     private String secret;
     private long expirationMs;
-
-    public JwtProperties() {
-    }
 
     public String getSecret() {
         return secret;
