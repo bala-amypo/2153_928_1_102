@@ -12,6 +12,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     // Find product by name
     Optional<Product> findByName(String name);
 
-    // Check if product exists by serial number
-    boolean existsBySerialNumber(String serialNumber);
+    // Check if product exists by model number (instead of serialNumber)
+    boolean existsByModelNumber(String modelNumber);
 }
