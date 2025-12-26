@@ -1,11 +1,7 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.Product;
-import com.example.demo.entity.User;
-import com.example.demo.entity.Warranty;
-import com.example.demo.repository.ProductRepository;
-import com.example.demo.repository.UserRepository;
-import com.example.demo.repository.WarrantyRepository;
+import com.example.demo.entity.*;
+import com.example.demo.repository.*;
 import com.example.demo.service.WarrantyService;
 import org.springframework.stereotype.Service;
 
@@ -29,21 +25,15 @@ public class WarrantyServiceImpl implements WarrantyService {
     @Override
     public Warranty registerWarranty(Long userId, Long productId, Warranty warranty) {
 
-        User user = userRepo.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        Product product = productRepo.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+        User user = userRepo.findById(userId).orElseThrow();
+        Product product = productRepo.findById(productId).orElseThrow();
 
         warranty.setUser(user);
         warranty.setProduct(product);
 
-        if (warranty.getPurchaseDate() != null &&
-                product.getWarrantyPeriodMonths() != null) {
-
+        if (warranty.getPurchaseDate() != null && product.getWarrantyPeriodMonths() != null) {
             warranty.setExpiryDate(
-                    warranty.getPurchaseDate()
-                            .plusMonths(product.getWarrantyPeriodMonths())
+                    warranty.getPurchaseDate().plusMonths(product.getWarrantyPeriodMonths())
             );
         }
 
@@ -53,8 +43,7 @@ public class WarrantyServiceImpl implements WarrantyService {
 
     @Override
     public Warranty getWarranty(Long warrantyId) {
-        return warrantyRepo.findById(warrantyId)
-                .orElseThrow(() -> new RuntimeException("Warranty not found"));
+        return warrantyRepo.findById(warrantyId).orElseThrow();
     }
 
     @Override
