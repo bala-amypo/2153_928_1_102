@@ -18,11 +18,18 @@ public class Warranty {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String serialNumber;   // ✅ REQUIRED (FIX)
+    private String serialNumber;
 
     private LocalDate purchaseDate;
 
     private LocalDate expiryDate;
+
+    @Column(nullable = false)
+    private String status;   // ✅ REQUIRED (FIX)
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;       // ✅ REQUIRED (FIX)
 
     @ManyToOne
     @JoinColumn(name = "product_id")
