@@ -11,7 +11,15 @@ public class AlertSchedule {
 
     private int daysBeforeExpiry;
 
+    private boolean sent;
+
+    @ManyToOne
+    @JoinColumn(name = "warranty_id")
+    private Warranty warranty;
+
     public AlertSchedule() {}
+
+    // ===== getters & setters =====
 
     public int getDaysBeforeExpiry() {
         return daysBeforeExpiry;
@@ -21,7 +29,23 @@ public class AlertSchedule {
         this.daysBeforeExpiry = daysBeforeExpiry;
     }
 
-    // ✅ BUILDER REQUIRED BY TEST
+    public boolean isSent() {
+        return sent;
+    }
+
+    public void setSent(boolean sent) {
+        this.sent = sent;
+    }
+
+    public Warranty getWarranty() {
+        return warranty;
+    }
+
+    public void setWarranty(Warranty warranty) {
+        this.warranty = warranty;
+    }
+
+    // ===== builder (REQUIRED by tests) =====
     public static Builder builder() {
         return new Builder();
     }
