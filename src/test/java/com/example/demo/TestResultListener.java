@@ -1,8 +1,25 @@
-<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name="DigitalWarrantyTrackerTestSuite" verbose="10">
-    <test name="AllTests">
-        <classes>
-            <class name="com.example.demo.DigitalWarrantyTrackerTestSuiteTest"/>
-        </classes>
-    </test>
-</suite>
+package com.example.demo;
+
+import org.testng.ITestListener;
+import org.testng.ITestResult;
+
+public class TestResultListener implements ITestListener {
+
+    @Override
+    public void onTestSuccess(ITestResult result) {
+        System.out.println(result.getMethod().getMethodName() + " - PASS");
+    }
+
+    @Override
+    public void onTestFailure(ITestResult result) {
+        System.out.println(result.getMethod().getMethodName() + " - FAIL");
+        if (result.getThrowable() != null) {
+            result.getThrowable().printStackTrace();
+        }
+    }
+
+    @Override
+    public void onTestSkipped(ITestResult result) {
+        System.out.println(result.getMethod().getMethodName() + " - SKIP");
+    }
+}

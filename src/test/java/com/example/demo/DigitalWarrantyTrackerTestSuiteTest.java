@@ -328,18 +328,8 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         JwtTokenProvider provider = new JwtTokenProvider(p);
         String token = provider.createToken(11L, "c@d.com", "ADMIN");
         var claims = provider.getClaims(token).getBody();
-        
-        // Check if email is stored in claims or as subject
         assertEquals(claims.get("userId", Integer.class).intValue(), 11);
-        
-        // Try both possible locations for email
-        String email = claims.get("email", String.class);
-        if (email == null) {
-            // If email is not in claims, check subject
-            assertEquals(claims.getSubject(), "c@d.com");
-        } else {
-            assertEquals(email, "c@d.com");
-        }
+        assertEquals(claims.get("email"), "c@d.com");
     }
 
     @Test(priority = 32)
@@ -629,12 +619,5 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         assertNotNull(warrantyService);
         assertNotNull(scheduleService);
         assertNotNull(logService);
-    }
-
-    @Test(priority = 61)
-    public void final_overall_success_check() {
-        // This is the 61st test to reach the total count
-        System.out.println("All previous tests executed successfully");
-        assertTrue(true, "All tests should pass");
     }
 }
