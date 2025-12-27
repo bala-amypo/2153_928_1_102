@@ -168,3 +168,6 @@
     </build>
 
 </project>
+
+ls -la /home/coder/Workspace/demo/src/test/
+mkdir -p /home/coder/Workspace/demo/src/test/java/com/example/
