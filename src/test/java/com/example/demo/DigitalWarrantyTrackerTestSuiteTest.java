@@ -12,11 +12,20 @@ import com.example.demo.security.JwtTokenProvider;
 import com.example.demo.service.impl.*;
 
 import java.time.LocalDate;
-import java.util.*;
 import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Collections;
+import java.util.Properties;
 
 import static org.testng.Assert.*;
 import static org.mockito.Mockito.*;
+
+// Remove the duplicate Optional import line
+// Don't use: import java.util.Optional; // This causes conflict with TestNG's Optional
 
 @Listeners(TestResultListener.class)
 public class DigitalWarrantyTrackerTestSuiteTest {
@@ -167,8 +176,8 @@ public class DigitalWarrantyTrackerTestSuiteTest {
                 .serialNumber("S123")
                 .build();
 
-        when(userRepository.findById(1L)).thenReturn(Optional.of(u));
-        when(productRepository.findById(1L)).thenReturn(Optional.of(p));
+        when(userRepository.findById(1L)).thenReturn(java.util.Optional.of(u));
+        when(productRepository.findById(1L)).thenReturn(java.util.Optional.of(p));
         when(warrantyRepository.existsBySerialNumber("S123")).thenReturn(false);
         when(warrantyRepository.save(any())).thenAnswer(i -> {
             Warranty arg = i.getArgument(0);
@@ -188,8 +197,8 @@ public class DigitalWarrantyTrackerTestSuiteTest {
                 .expiryDate(LocalDate.now())
                 .serialNumber("S124")
                 .build();
-        when(userRepository.findById(1L)).thenReturn(Optional.of(new User()));
-        when(productRepository.findById(1L)).thenReturn(Optional.of(new Product()));
+        when(userRepository.findById(1L)).thenReturn(java.util.Optional.of(new User()));
+        when(productRepository.findById(1L)).thenReturn(java.util.Optional.of(new Product()));
         try {
             warrantyService.registerWarranty(1L, 1L, w);
             fail("Expected IllegalArgumentException");
@@ -207,7 +216,7 @@ public class DigitalWarrantyTrackerTestSuiteTest {
 
     @Test(priority = 14)
     public void getWarranty_notFound_fail() {
-        when(warrantyRepository.findById(999L)).thenReturn(Optional.empty());
+        when(warrantyRepository.findById(999L)).thenReturn(java.util.Optional.empty());
         try {
             warrantyService.getWarranty(999L);
             fail("Should throw");
@@ -397,7 +406,7 @@ public class DigitalWarrantyTrackerTestSuiteTest {
     public void alertSchedule_create_success() {
         Warranty w = new Warranty();
         w.setId(20L);
-        when(warrantyRepository.findById(20L)).thenReturn(Optional.of(w));
+        when(warrantyRepository.findById(20L)).thenReturn(java.util.Optional.of(w));
         AlertSchedule s = AlertSchedule.builder().daysBeforeExpiry(10).enabled(true).build();
         when(scheduleRepository.save(any())).thenAnswer(i -> {
             AlertSchedule a = i.getArgument(0);
@@ -413,7 +422,7 @@ public class DigitalWarrantyTrackerTestSuiteTest {
     public void alertSchedule_create_negativeDays_fail() {
         Warranty w = new Warranty();
         w.setId(21L);
-        when(warrantyRepository.findById(21L)).thenReturn(Optional.of(w));
+        when(warrantyRepository.findById(21L)).thenReturn(java.util.Optional.of(w));
         AlertSchedule s = AlertSchedule.builder().daysBeforeExpiry(-1).build();
         try {
             scheduleService.createSchedule(21L, s);
@@ -425,7 +434,7 @@ public class DigitalWarrantyTrackerTestSuiteTest {
 
     @Test(priority = 38)
     public void alertSchedule_list_success() {
-        when(warrantyRepository.findById(22L)).thenReturn(Optional.of(new Warranty()));
+        when(warrantyRepository.findById(22L)).thenReturn(java.util.Optional.of(new Warranty()));
         when(scheduleRepository.findByWarrantyId(22L)).thenReturn(List.of(new AlertSchedule()));
         var list = scheduleService.getSchedules(22L);
         assertEquals(list.size(), 1);
@@ -435,7 +444,7 @@ public class DigitalWarrantyTrackerTestSuiteTest {
     public void alertLog_add_and_get() {
         Warranty w = new Warranty();
         w.setId(30L);
-        when(warrantyRepository.findById(30L)).thenReturn(Optional.of(w));
+        when(warrantyRepository.findById(30L)).thenReturn(java.util.Optional.of(w));
         when(logRepository.save(any())).thenAnswer(i -> {
             AlertLog a = i.getArgument(0);
             a.setId(5L);
@@ -451,7 +460,7 @@ public class DigitalWarrantyTrackerTestSuiteTest {
 
     @Test(priority = 40)
     public void alertLog_get_no_warranty_fail() {
-        when(warrantyRepository.findById(99L)).thenReturn(Optional.empty());
+        when(warrantyRepository.findById(99L)).thenReturn(java.util.Optional.empty());
         try {
             logService.getLogs(99L);
             fail("Should fail");
@@ -469,7 +478,7 @@ public class DigitalWarrantyTrackerTestSuiteTest {
 
     @Test(priority = 42)
     public void user_findByEmail_notFound_throw() {
-        when(userRepository.findByEmail("not@x")).thenReturn(Optional.empty());
+        when(userRepository.findByEmail("not@x")).thenReturn(java.util.Optional.empty());
         try {
             userService.findByEmail("not@x");
             fail("Should throw ResourceNotFoundException");
@@ -500,14 +509,14 @@ public class DigitalWarrantyTrackerTestSuiteTest {
     public void warranty_get_success() {
         Warranty w = new Warranty();
         w.setId(55L);
-        when(warrantyRepository.findById(55L)).thenReturn(Optional.of(w));
+        when(warrantyRepository.findById(55L)).thenReturn(java.util.Optional.of(w));
         var r = warrantyService.getWarranty(55L);
         assertEquals(r.getId().longValue(), 55L);
     }
 
     @Test(priority = 46)
     public void schedule_get_nonexistent_warranty_fail() {
-        when(warrantyRepository.findById(999L)).thenReturn(Optional.empty());
+        when(warrantyRepository.findById(999L)).thenReturn(java.util.Optional.empty());
         try {
             scheduleService.getSchedules(999L);
             fail("Should throw");
@@ -518,7 +527,7 @@ public class DigitalWarrantyTrackerTestSuiteTest {
 
     @Test(priority = 47)
     public void alertLog_add_nonexistent_warranty_fail() {
-        when(warrantyRepository.findById(888L)).thenReturn(Optional.empty());
+        when(warrantyRepository.findById(888L)).thenReturn(java.util.Optional.empty());
         try {
             logService.addLog(888L, "msg");
             fail("Should throw");
@@ -534,8 +543,8 @@ public class DigitalWarrantyTrackerTestSuiteTest {
                 .expiryDate(LocalDate.now().plusDays(10))
                 .serialNumber("SAME")
                 .build();
-        when(userRepository.findById(1L)).thenReturn(Optional.of(new User()));
-        when(productRepository.findById(1L)).thenReturn(Optional.of(new Product()));
+        when(userRepository.findById(1L)).thenReturn(java.util.Optional.of(new User()));
+        when(productRepository.findById(1L)).thenReturn(java.util.Optional.of(new Product()));
         when(warrantyRepository.existsBySerialNumber("SAME")).thenReturn(true);
         try {
             warrantyService.registerWarranty(1L, 1L, w);
@@ -580,7 +589,7 @@ public class DigitalWarrantyTrackerTestSuiteTest {
     @Test(priority = 54)
     public void user_findByEmail_success() {
         User u = new User(9L, "Name", "n@example.com", "pwd", "USER");
-        when(userRepository.findByEmail("n@example.com")).thenReturn(Optional.of(u));
+        when(userRepository.findByEmail("n@example.com")).thenReturn(java.util.Optional.of(u));
         var r = userService.findByEmail("n@example.com");
         assertEquals(r.getId().longValue(), 9L);
     }
