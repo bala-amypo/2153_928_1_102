@@ -6,3 +6,6 @@
         </classes>
     </test>
 </suite>
+
+
+mvn test -Dtest=DigitalWarrantyTrackerTestSuiteTest -X
