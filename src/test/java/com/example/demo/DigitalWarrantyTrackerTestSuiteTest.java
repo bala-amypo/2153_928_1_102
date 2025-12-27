@@ -1,22 +1,36 @@
 package com.example.demo;
 
-import org.mockito.*;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.testng.annotations.*;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Listeners;
+import org.testng.annotations.Test;
 
 import com.example.demo.config.JwtProperties;
-import com.example.demo.entity.*;
-import com.example.demo.repository.*;
+import com.example.demo.entity.AlertLog;
+import com.example.demo.entity.AlertSchedule;
+import com.example.demo.entity.Product;
+import com.example.demo.entity.User;
+import com.example.demo.entity.Warranty;
+import com.example.demo.repository.AlertLogRepository;
+import com.example.demo.repository.AlertScheduleRepository;
+import com.example.demo.repository.ProductRepository;
+import com.example.demo.repository.UserRepository;
+import com.example.demo.repository.WarrantyRepository;
 import com.example.demo.security.JwtTokenProvider;
-import com.example.demo.service.impl.*;
+import com.example.demo.service.impl.AlertLogServiceImpl;
+import com.example.demo.service.impl.AlertScheduleServiceImpl;
+import com.example.demo.service.impl.ProductServiceImpl;
+import com.example.demo.service.impl.UserServiceImpl;
+import com.example.demo.service.impl.WarrantyServiceImpl;
 
-import java.time.LocalDate;
-import java.util.*;
 import java.lang.reflect.Field;
+import java.time.LocalDate;
+import java.util.Optional;
 
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.*;
-import static org.mockito.Mockito.*;
 
 @Listeners(TestResultListener.class)
 public class DigitalWarrantyTrackerTestSuiteTest {
@@ -26,7 +40,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
     @Mock private WarrantyRepository warrantyRepository;
     @Mock private AlertScheduleRepository scheduleRepository;
     @Mock private AlertLogRepository logRepository;
-    @Mock private PasswordEncoder passwordEncoder;
 
     private UserServiceImpl userService;
     private ProductServiceImpl productService;
@@ -51,21 +64,35 @@ public class DigitalWarrantyTrackerTestSuiteTest {
 
     @Test(priority = 2)
     public void createProduct_success() {
-        Product p = Product.builder().name("Phone").brand("X").modelNumber("X100").category("Electronics").build();
+        Product p = Product.builder()
+                .name("Phone")
+                .brand("X")
+                .modelNumber("X100")
+                .category("Electronics")
+                .build();
+
         when(productRepository.save(any())).thenReturn(p);
+
         Product saved = productService.addProduct(p);
         assertEquals(saved.getModelNumber(), "X100");
     }
 
     @Test(priority = 3)
     public void createUser_success() {
-        User u = User.builder().name("Bob").email("bob@example.com").password("secret").role("USER").build();
+        User u = User.builder()
+                .name("Bob")
+                .email("bob@example.com")
+                .password("secret")
+                .role("USER")
+                .build();
+
         when(userRepository.existsByEmail(any())).thenReturn(false);
         when(userRepository.save(any())).thenAnswer(i -> {
             User arg = i.getArgument(0);
             arg.setId(1L);
             return arg;
         });
+
         User saved = userService.register(u);
         assertNotNull(saved.getId());
     }
@@ -130,7 +157,7 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         var claims = provider.getClaims(token).getBody();
 
         assertEquals(claims.get("userId", Integer.class).intValue(), 11);
-        assertEquals(claims.getSubject(), "c@d.com"); // IMPORTANT FIX
+        assertEquals(claims.getSubject(), "c@d.com");
     }
 
     @Test(priority = 7)
