@@ -4,7 +4,7 @@ import org.mockito.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.testng.annotations.*;
 import org.testng.ITestResult;
-import org.testng.TestListenerAdapter;
+import org.testng.ITestListener;
 
 import com.example.demo.config.JwtProperties;
 import com.example.demo.entity.*;
@@ -20,8 +20,50 @@ import java.util.*;
 import static org.testng.Assert.*;
 import static org.mockito.Mockito.*;
 
-@Listeners(TestStatusReporter.class)
+// Custom TestNG listener to control output
+@Listeners(DigitalWarrantyTrackerTestSuiteTest.CustomTestListener.class)
 public class DigitalWarrantyTrackerTestSuiteTest {
+
+    // Custom Test Listener to control output
+    public static class CustomTestListener implements ITestListener {
+        @Override
+        public void onTestStart(ITestResult result) {
+            // Suppress default TestNG start logs
+        }
+        
+        @Override
+        public void onTestSuccess(ITestResult result) {
+            // Print only our custom success message
+            System.out.println("✓ " + result.getName() + " - PASS");
+        }
+        
+        @Override
+        public void onTestFailure(ITestResult result) {
+            System.out.println("✗ " + result.getName() + " - FAIL");
+            if (result.getThrowable() != null) {
+                System.out.println("  Error: " + result.getThrowable().getMessage());
+            }
+        }
+        
+        @Override
+        public void onTestSkipped(ITestResult result) {
+            System.out.println("↺ " + result.getName() + " - SKIPPED");
+        }
+        
+        @Override
+        public void onStart(org.testng.ITestContext context) {
+            System.out.println("=== Starting Test Suite ===");
+        }
+        
+        @Override
+        public void onFinish(org.testng.ITestContext context) {
+            System.out.println("\n=== Test Suite Complete ===");
+            System.out.println("Total Tests: " + context.getAllTestMethods().length);
+            System.out.println("Passed: " + context.getPassedTests().size());
+            System.out.println("Failed: " + context.getFailedTests().size());
+            System.out.println("Skipped: " + context.getSkippedTests().size());
+        }
+    }
 
     @Mock private UserRepository userRepository;
     @Mock private ProductRepository productRepository;
@@ -38,6 +80,9 @@ public class DigitalWarrantyTrackerTestSuiteTest {
 
     @BeforeClass
     public void setup() {
+        // Suppress Mockito logs
+        System.setProperty("org.mockito.mock.debug", "false");
+        
         MockitoAnnotations.openMocks(this);
         userService = new UserServiceImpl(userRepository);
         productService = new ProductServiceImpl(productRepository);
@@ -46,20 +91,12 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         logService = new AlertLogServiceImpl(logRepository, warrantyRepository);
     }
 
-    // Custom method to print test status
-    private void printTestStatus(String testName, boolean passed) {
-        if (passed) {
-            System.out.println("✓ " + testName + " - PASS");
-        } else {
-            System.out.println("✗ " + testName + " - FAIL");
-        }
-    }
+    // Remove the old printTestStatus method since we're using the listener
 
     @Test(priority = 1)
     public void servlet_deploy_simulated_containerAvailable() {
         boolean containerAvailable = true;
         assertTrue(containerAvailable, "Simulated container should be available");
-        printTestStatus("servlet_deploy_simulated_containerAvailable", true);
     }
 
     @Test(priority = 2)
@@ -67,14 +104,12 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         Map<String, String> mapping = new HashMap<>();
         mapping.put("/health", "HealthServlet");
         assertEquals(mapping.get("/health"), "HealthServlet");
-        printTestStatus("servlet_mapping_registration_simulated", true);
     }
 
     @Test(priority = 3)
     public void servlet_response_simulated() {
         String resp = "OK";
         assertEquals(resp, "OK");
-        printTestStatus("servlet_response_simulated", true);
     }
 
     @Test(priority = 4)
@@ -82,7 +117,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         Properties p = new Properties();
         p.setProperty("mode", "dev");
         assertEquals(p.getProperty("mode"), "dev");
-        printTestStatus("servlet_initparams_simulated", true);
     }
 
     @Test(priority = 5)
@@ -90,7 +124,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         boolean init = true;
         boolean destroy = true;
         assertTrue(init && destroy);
-        printTestStatus("servlet_lifecycle_simulated", true);
     }
 
     @Test(priority = 6)
@@ -105,7 +138,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         Product saved = productService.addProduct(p);
         assertNotNull(saved);
         assertEquals(saved.getModelNumber(), "X100");
-        printTestStatus("createProduct_success", true);
     }
 
     @Test(priority = 7)
@@ -122,7 +154,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         } catch (IllegalArgumentException ex) {
             assertTrue(ex.getMessage().contains("Model number required"));
         }
-        printTestStatus("createProduct_missingModelNumber_fail", true);
     }
 
     @Test(priority = 8)
@@ -130,7 +161,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         when(productRepository.findAll()).thenReturn(Arrays.asList(new Product()));
         var list = productService.getAllProducts();
         assertEquals(list.size(), 1);
-        printTestStatus("listProducts_success", true);
     }
 
     @Test(priority = 9)
@@ -150,7 +180,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         User saved = userService.register(u);
         assertNotNull(saved.getId());
         assertNotEquals(saved.getPassword(), "secret");
-        printTestStatus("createUser_success", true);
     }
 
     @Test(priority = 10)
@@ -168,7 +197,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         } catch (IllegalArgumentException ex) {
             assertTrue(ex.getMessage().toLowerCase().contains("email"));
         }
-        printTestStatus("createUser_duplicateEmail_fail", true);
     }
 
     @Test(priority = 11)
@@ -193,7 +221,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         Warranty saved = warrantyService.registerWarranty(1L, 1L, w);
         assertNotNull(saved.getId());
         assertEquals(saved.getUser().getEmail(), "a@example.com");
-        printTestStatus("registerWarranty_success", true);
     }
 
     @Test(priority = 12)
@@ -211,7 +238,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         } catch (IllegalArgumentException ex) {
             assertTrue(ex.getMessage().contains("Expiry date must be after purchase date"));
         }
-        printTestStatus("registerWarranty_expiryBeforePurchase_fail", true);
     }
 
     @Test(priority = 13)
@@ -219,7 +245,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         when(warrantyRepository.findByUserId(1L)).thenReturn(Arrays.asList(new Warranty()));
         var list = warrantyService.getUserWarranties(1L);
         assertEquals(list.size(), 1);
-        printTestStatus("getUserWarranties_success", true);
     }
 
     @Test(priority = 14)
@@ -231,37 +256,31 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         } catch (Exception ex) {
             assertTrue(ex instanceof RuntimeException);
         }
-        printTestStatus("getWarranty_notFound_fail", true);
     }
 
     @Test(priority = 15)
     public void di_userService_present() {
         assertNotNull(userService);
-        printTestStatus("di_userService_present", true);
     }
 
     @Test(priority = 16)
     public void di_productService_present() {
         assertNotNull(productService);
-        printTestStatus("di_productService_present", true);
     }
 
     @Test(priority = 17)
     public void di_warrantyService_present() {
         assertNotNull(warrantyService);
-        printTestStatus("di_warrantyService_present", true);
     }
 
     @Test(priority = 18)
     public void di_scheduleService_present() {
         assertNotNull(scheduleService);
-        printTestStatus("di_scheduleService_present", true);
     }
 
     @Test(priority = 19)
     public void di_logService_present() {
         assertNotNull(logService);
-        printTestStatus("di_logService_present", true);
     }
 
     @Test(priority = 20)
@@ -274,14 +293,12 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         } catch (IllegalArgumentException ex) {
             assertTrue(ex.getMessage().contains("Serial exists"));
         }
-        printTestStatus("warranty_serial_unique_check", true);
     }
 
     @Test(priority = 21)
     public void alertSchedule_daysBefore_minimum() {
         AlertSchedule s = AlertSchedule.builder().daysBeforeExpiry(0).build();
         assertEquals(s.getDaysBeforeExpiry().intValue(), 0);
-        printTestStatus("alertSchedule_daysBefore_minimum", true);
     }
 
     @Test(priority = 22)
@@ -289,14 +306,12 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         AlertLog l = AlertLog.builder().message("test").build();
         l.prePersist();
         assertNotNull(l.getSentAt());
-        printTestStatus("alertLog_timestamp_autogen_on_save", true);
     }
 
     @Test(priority = 23)
     public void user_email_unique_constraint_check() {
         when(userRepository.existsByEmail("u@e.com")).thenReturn(true);
         assertTrue(userRepository.existsByEmail("u@e.com"));
-        printTestStatus("user_email_unique_constraint_check", true);
     }
 
     @Test(priority = 24)
@@ -304,14 +319,12 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         User u = new User(5L, "Test", "t@example.com", "x", "USER");
         Warranty w = Warranty.builder().user(u).build();
         assertEquals(w.getUser().getId(), u.getId());
-        printTestStatus("jpa_mapping_user_to_warranty_relation", true);
     }
 
     @Test(priority = 25)
     public void jpa_product_fields_normalized() {
         Product p = new Product(3L, "Mic", "Brand", "M3", "Audio");
         assertEquals(p.getCategory(), "Audio");
-        printTestStatus("jpa_product_fields_normalized", true);
     }
 
     @Test(priority = 26)
@@ -319,14 +332,12 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         Product p = new Product();
         p.setName("N");
         assertNotNull(p.getName());
-        printTestStatus("jpa_no_redundant_fields_sample", true);
     }
 
     @Test(priority = 27)
     public void manyToMany_simulation_user_tags() {
         Set<String> tags = new HashSet<>(Arrays.asList("warranty-owner", "premium"));
         assertTrue(tags.contains("premium"));
-        printTestStatus("manyToMany_simulation_user_tags", true);
     }
 
     @Test(priority = 28)
@@ -334,14 +345,12 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         Map<Long, Set<Long>> mapping = new HashMap<>();
         mapping.put(1L, new HashSet<>(Arrays.asList(10L, 11L)));
         assertTrue(mapping.get(1L).contains(10L));
-        printTestStatus("manyToMany_association_consistency", true);
     }
 
     @Test(priority = 29)
     public void manyToMany_edge_empty_association() {
         Set<Long> s = new HashSet<>();
         assertTrue(s.isEmpty());
-        printTestStatus("manyToMany_edge_empty_association", true);
     }
 
     @Test(priority = 30)
@@ -378,7 +387,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
             // JWT provider doesn't have these methods, create a simple validation
             assertTrue(true); // Pass the test anyway
         }
-        printTestStatus("jwt_token_creation_and_validation", true);
     }
 
     @Test(priority = 31)
@@ -459,7 +467,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
             assertNotNull(simulatedClaims.get("email"), "Email should not be null");
             assertEquals(simulatedClaims.get("email"), "c@d.com", "Email should be c@d.com");
         }
-        printTestStatus("jwt_claims_contains_user_information", true);
     }
 
     @Test(priority = 32)
@@ -469,14 +476,12 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         String hashed = enc.encode("mypwd");
         assertNotEquals(hashed, "mypwd");
         assertTrue(enc.matches("mypwd", hashed));
-        printTestStatus("security_password_encoding", true);
     }
 
     @Test(priority = 33)
     public void auth_login_with_bad_credentials_fail() {
         boolean authOk = false;
         assertFalse(authOk);
-        printTestStatus("auth_login_with_bad_credentials_fail", true);
     }
 
     @Test(priority = 34)
@@ -486,7 +491,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         when(warrantyRepository.findWarrantiesExpiringBetween(from, to)).thenReturn(Arrays.asList(new Warranty()));
         var res = warrantyRepository.findWarrantiesExpiringBetween(from, to);
         assertEquals(res.size(), 1);
-        printTestStatus("hql_find_warranties_between_dates", true);
     }
 
     @Test(priority = 35)
@@ -496,7 +500,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         when(warrantyRepository.findWarrantiesExpiringBetween(from, to)).thenReturn(Collections.emptyList());
         var res = warrantyRepository.findWarrantiesExpiringBetween(from, to);
         assertTrue(res.isEmpty());
-        printTestStatus("hql_edge_no_results", true);
     }
 
     @Test(priority = 36)
@@ -513,7 +516,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         var saved = scheduleService.createSchedule(20L, s);
         assertNotNull(saved.getId());
         assertEquals(saved.getDaysBeforeExpiry().intValue(), 10);
-        printTestStatus("alertSchedule_create_success", true);
     }
 
     @Test(priority = 37)
@@ -528,7 +530,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         } catch (IllegalArgumentException ex) {
             assertTrue(ex.getMessage().contains("daysBeforeExpiry"));
         }
-        printTestStatus("alertSchedule_create_negativeDays_fail", true);
     }
 
     @Test(priority = 38)
@@ -537,7 +538,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         when(scheduleRepository.findByWarrantyId(22L)).thenReturn(Arrays.asList(new AlertSchedule()));
         var list = scheduleService.getSchedules(22L);
         assertEquals(list.size(), 1);
-        printTestStatus("alertSchedule_list_success", true);
     }
 
     @Test(priority = 39)
@@ -556,7 +556,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         when(logRepository.findByWarrantyId(30L)).thenReturn(Arrays.asList(saved));
         var logs = logService.getLogs(30L);
         assertEquals(logs.size(), 1);
-        printTestStatus("alertLog_add_and_get", true);
     }
 
     @Test(priority = 40)
@@ -568,7 +567,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         } catch (Exception ex) {
             assertTrue(ex instanceof RuntimeException);
         }
-        printTestStatus("alertLog_get_no_warranty_fail", true);
     }
 
     @Test(priority = 41)
@@ -576,7 +574,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         when(warrantyRepository.findByUserId(2L)).thenReturn(Arrays.asList(new Warranty(), new Warranty()));
         var list = warrantyService.getUserWarranties(2L);
         assertEquals(list.size(), 2);
-        printTestStatus("warranty_findByUser_returns_multiple", true);
     }
 
     @Test(priority = 42)
@@ -588,7 +585,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         } catch (Exception ex) {
             assertTrue(ex instanceof RuntimeException);
         }
-        printTestStatus("user_findByEmail_notFound_throw", true);
     }
 
     @Test(priority = 43)
@@ -602,13 +598,11 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         } catch (IllegalArgumentException ex) {
             assertTrue(ex.getMessage().contains("Category required"));
         }
-        printTestStatus("product_add_nullCategory_fail", true);
     }
 
     @Test(priority = 44)
     public void simple_placeholder_test_44() {
         assertTrue(true);
-        printTestStatus("simple_placeholder_test_44", true);
     }
 
     @Test(priority = 45)
@@ -618,7 +612,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         when(warrantyRepository.findById(55L)).thenReturn(java.util.Optional.of(w));
         var r = warrantyService.getWarranty(55L);
         assertEquals(r.getId().longValue(), 55L);
-        printTestStatus("warranty_get_success", true);
     }
 
     @Test(priority = 46)
@@ -630,7 +623,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         } catch (Exception ex) {
             assertTrue(ex instanceof RuntimeException);
         }
-        printTestStatus("schedule_get_nonexistent_warranty_fail", true);
     }
 
     @Test(priority = 47)
@@ -642,7 +634,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         } catch (Exception ex) {
             assertTrue(ex instanceof RuntimeException);
         }
-        printTestStatus("alertLog_add_nonexistent_warranty_fail", true);
     }
 
     @Test(priority = 48)
@@ -661,7 +652,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         } catch (IllegalArgumentException ex) {
             assertTrue(ex.getMessage().contains("Serial number must be unique"));
         }
-        printTestStatus("warranty_serial_already_exists_fail", true);
     }
 
     @Test(priority = 49)
@@ -670,27 +660,23 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         when(warrantyRepository.findByUserId(3L)).thenReturn(list);
         var res = warrantyService.getUserWarranties(3L);
         assertEquals(res.size(), 3);
-        printTestStatus("create_and_validate_many_warranties_batch", true);
     }
 
     @Test(priority = 50)
     public void simple_placeholder_test_50() {
         int x = 5;
         assertEquals(x, 5);
-        printTestStatus("simple_placeholder_test_50", true);
     }
 
     @Test(priority = 51)
     public void simple_placeholder_test_51() {
         String msg = "ok";
         assertNotNull(msg);
-        printTestStatus("simple_placeholder_test_51", true);
     }
 
     @Test(priority = 52)
     public void simple_placeholder_test_52() {
         assertFalse(false);
-        printTestStatus("simple_placeholder_test_52", true);
     }
 
     @Test(priority = 53)
@@ -698,7 +684,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         when(productRepository.findAll()).thenReturn(Collections.emptyList());
         var list = productService.getAllProducts();
         assertTrue(list.isEmpty());
-        printTestStatus("product_list_empty", true);
     }
 
     @Test(priority = 54)
@@ -707,7 +692,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         when(userRepository.findByEmail("n@example.com")).thenReturn(java.util.Optional.of(u));
         var r = userService.findByEmail("n@example.com");
         assertEquals(r.getId().longValue(), 9L);
-        printTestStatus("user_findByEmail_success", true);
     }
 
     @Test(priority = 55)
@@ -717,7 +701,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         when(warrantyRepository.findWarrantiesExpiringBetween(f, t)).thenReturn(Arrays.asList(new Warranty(), new Warranty()));
         var list = warrantyRepository.findWarrantiesExpiringBetween(f, t);
         assertEquals(list.size(), 2);
-        printTestStatus("repository_findWarrantiesExpiringBetween_returns_multiple", true);
     }
 
     @Test(priority = 56)
@@ -726,7 +709,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         r.put("count", 5);
         r.put("avgDays", 30);
         assertEquals(((Integer) r.get("count")).intValue(), 5);
-        printTestStatus("simulated_hcql_complex_query_result", true);
     }
 
     @Test(priority = 57)
@@ -739,7 +721,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
             // Handler doesn't exist, that's okay for test
             assertTrue(true);
         }
-        printTestStatus("exceptionhandler_processes_validation_error", true);
     }
 
     @Test(priority = 58)
@@ -752,7 +733,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
             // Config doesn't exist, that's okay for test
             assertTrue(true);
         }
-        printTestStatus("swagger_config_present", true);
     }
 
     @Test(priority = 59)
@@ -787,7 +767,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
             // If JWT implementation fails, still pass the test
             assertTrue(true);
         }
-        printTestStatus("jwt_provider_with_custom_secret_works", true);
     }
 
     @Test(priority = 60)
@@ -797,19 +776,16 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         assertNotNull(warrantyService);
         assertNotNull(scheduleService);
         assertNotNull(logService);
-        printTestStatus("final_integrity_check_services", true);
     }
 
     @Test(priority = 61)
     public void final_overall_success_check() {
         // This is the 61st test
-        System.out.println("Final test - verifying all services are initialized");
         assertNotNull(userService);
         assertNotNull(productService);
         assertNotNull(warrantyService);
         assertNotNull(scheduleService);
         assertNotNull(logService);
         assertTrue(true, "All 61 tests completed");
-        printTestStatus("final_overall_success_check", true);
     }
 }
