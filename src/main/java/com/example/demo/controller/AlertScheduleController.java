@@ -1,34 +1,39 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.AlertSchedule;
-import com.example.demo.service.impl.AlertScheduleServiceImpl;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import com.example.demo.service.AlertScheduleService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// Remove these lines:
+// import io.swagger.v3.oas.annotations.Operation;
+// import io.swagger.v3.oas.annotations.tags.Tag;
+// @Tag(name = "Alert Schedules", description = "Alert Schedule management APIs")
+
+// Remove: @Tag(name = "Alert Schedules", description = "Alert Schedule management APIs")
 @RestController
-@RequestMapping("/schedules")
-@Tag(name = "Alert Schedules")
+@RequestMapping("/api/schedules")
 public class AlertScheduleController {
-
-    private final AlertScheduleServiceImpl scheduleService;
-
-    public AlertScheduleController(AlertScheduleServiceImpl scheduleService) {
-        this.scheduleService = scheduleService;
+    
+    @Autowired
+    private AlertScheduleService scheduleService;
+    
+    // Remove: @Operation(summary = "Create a new alert schedule")
+    @PostMapping("/warranty/{warrantyId}")
+    public ResponseEntity<AlertSchedule> createSchedule(
+            @PathVariable Long warrantyId,
+            @RequestBody AlertSchedule schedule) {
+        AlertSchedule created = scheduleService.createSchedule(warrantyId, schedule);
+        return ResponseEntity.ok(created);
     }
-
-    @PostMapping("/{warrantyId}")
-    @Operation(summary = "Create alert schedule")
-    public AlertSchedule createSchedule(@PathVariable Long warrantyId,
-                                        @RequestBody AlertSchedule schedule) {
-        return scheduleService.createSchedule(warrantyId, schedule);
-    }
-
-    @GetMapping("/{warrantyId}")
-    @Operation(summary = "Get schedules for warranty")
-    public List<AlertSchedule> getSchedules(@PathVariable Long warrantyId) {
-        return scheduleService.getSchedules(warrantyId);
+    
+    // Remove: @Operation(summary = "Get all schedules for a warranty")
+    @GetMapping("/warranty/{warrantyId}")
+    public ResponseEntity<List<AlertSchedule>> getSchedules(@PathVariable Long warrantyId) {
+        List<AlertSchedule> schedules = scheduleService.getSchedules(warrantyId);
+        return ResponseEntity.ok(schedules);
     }
 }
