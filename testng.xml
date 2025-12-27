@@ -1,7 +1,7 @@
-<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
 <suite name="DigitalWarrantyTrackerSuite">
 
-    <test name="AllTests">
+    <test name="ServiceTests">
         <classes>
             <class name="com.example.demo.DigitalWarrantyTrackerTestSuiteTest"/>
         </classes>
