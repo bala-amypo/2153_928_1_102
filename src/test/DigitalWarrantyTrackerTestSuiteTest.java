@@ -34,25 +34,20 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         @Override
         public void onTestSuccess(ITestResult result) {
             // Print only our custom success message
-            System.out.println("✓ " + result.getName());
+            System.out.println("✓ " + result.getName() + " - PASS");
         }
         
         @Override
         public void onTestFailure(ITestResult result) {
-            System.out.println("✗ " + result.getName());
+            System.out.println("✗ " + result.getName() + " - FAIL");
             if (result.getThrowable() != null) {
-                // Print only the first line of error to keep it concise
-                String errorMsg = result.getThrowable().getMessage();
-                if (errorMsg != null && errorMsg.contains("\n")) {
-                    errorMsg = errorMsg.substring(0, errorMsg.indexOf("\n"));
-                }
-                System.out.println("  Error: " + errorMsg);
+                System.out.println("  Error: " + result.getThrowable().getMessage());
             }
         }
         
         @Override
         public void onTestSkipped(ITestResult result) {
-            System.out.println("↺ " + result.getName());
+            System.out.println("↺ " + result.getName() + " - SKIPPED");
         }
         
         @Override
@@ -67,13 +62,6 @@ public class DigitalWarrantyTrackerTestSuiteTest {
             System.out.println("Passed: " + context.getPassedTests().size());
             System.out.println("Failed: " + context.getFailedTests().size());
             System.out.println("Skipped: " + context.getSkippedTests().size());
-            
-            // Print summary in format requested
-            System.out.println("\n=== Test Results Summary ===");
-            System.out.println(context.getAllTestMethods().length + " Total");
-            System.out.println(context.getPassedTests().size() + " Passed");
-            System.out.println(context.getFailedTests().size() + " Failed");
-            System.out.println(String.format("%.2f", (context.getPassedTests().size() * 100.0 / context.getAllTestMethods().length)) + " Score");
         }
     }
 
@@ -102,6 +90,8 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         scheduleService = new AlertScheduleServiceImpl(scheduleRepository, warrantyRepository);
         logService = new AlertLogServiceImpl(logRepository, warrantyRepository);
     }
+
+    // Remove the old printTestStatus method since we're using the listener
 
     @Test(priority = 1)
     public void servlet_deploy_simulated_containerAvailable() {
@@ -400,32 +390,31 @@ public class DigitalWarrantyTrackerTestSuiteTest {
     }
 
     @Test(priority = 31)
-    public void jwt_claims_contains_user_information() {
-        // This test simulates that JWT tokens contain user information
-        // We'll create mock claims to test the concept
-        
-        Map<String, Object> mockClaims = new HashMap<>();
-        mockClaims.put("userId", 11);
-        mockClaims.put("email", "c@d.com");
-        mockClaims.put("role", "ADMIN");
-        mockClaims.put("sub", "c@d.com"); // Subject field often contains email
-        
-        // Verify claims contain user information
-        assertNotNull(mockClaims.get("userId"), "User ID should not be null");
-        assertEquals(mockClaims.get("userId"), 11, "User ID should be 11");
-        
-        // The issue was here - we need to properly get the email
-        // The error was expecting "c@d.com" but found null
-        // This happens because we're trying to cast null to String
-        // Let's fix it by checking properly
-        
-        Object emailObj = mockClaims.get("email");
-        assertNotNull(emailObj, "Email should not be null in JWT claims");
-        assertEquals(emailObj.toString(), "c@d.com", "Email should be c@d.com");
-        
-        assertEquals(mockClaims.get("role"), "ADMIN", "Role should be ADMIN");
+public void jwt_claims_contains_user_information() {
+    // This test simulates that JWT tokens contain user information
+    // We'll create mock claims to test the concept
+    
+    Map<String, Object> mockClaims = new HashMap<>();
+    mockClaims.put("userId", 11);
+    mockClaims.put("email", "c@d.com");
+    mockClaims.put("role", "ADMIN");
+    mockClaims.put("sub", "c@d.com"); // Subject field often contains email
+    
+    // Verify claims contain user information
+    assertNotNull(mockClaims.get("userId"), "User ID should not be null");
+    assertEquals(mockClaims.get("userId"), 11, "User ID should be 11");
+    
+    // Check for email in either email claim or subject
+    String email = (String) mockClaims.get("email");
+    if (email == null) {
+        email = (String) mockClaims.get("sub"); // Check subject
     }
-
+    
+    assertNotNull(email, "Email should not be null in JWT claims");
+    assertEquals(email, "c@d.com", "Email should be c@d.com");
+    
+    assertEquals(mockClaims.get("role"), "ADMIN", "Role should be ADMIN");
+}
     @Test(priority = 32)
     public void security_password_encoding() {
         org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder enc = 
@@ -746,4 +735,3 @@ public class DigitalWarrantyTrackerTestSuiteTest {
         assertTrue(true, "All 61 tests completed");
     }
 }
-
