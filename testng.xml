@@ -1,15 +1,8 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name="DigitalWarrantyTrackerTestSuite" verbose="10">
-
-    <!-- Register ONLY your custom listener -->
-    <listeners>
-        <listener class-name="com.example.demo.TestResultListener"/>
-    </listeners>
-
-    <test name="DigitalWarrantyTrackerTests" preserve-order="true">
+<suite name="DigitalWarrantyTrackerTestSuite">
+    <test name="AllTests">
         <classes>
             <class name="com.example.demo.DigitalWarrantyTrackerTestSuiteTest"/>
         </classes>
     </test>
-
 </suite>
