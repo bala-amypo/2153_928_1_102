@@ -1,5 +1,5 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name="DigitalWarrantyTrackerTestSuite" verbose="0">
+<suite name="DigitalWarrantyTrackerTestSuite" verbose="10">
 
     <!-- Register ONLY your custom listener -->
     <listeners>
