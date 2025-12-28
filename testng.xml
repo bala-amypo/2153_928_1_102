@@ -2,7 +2,7 @@
 <suite name="DigitalWarrantyTrackerTestSuite">
     <test name="AllTests">
         <classes>
-            <class name="com.example.demo.DigitalWarrantyTrackerTestSuiteTest"/>
+            <class name="com.example.demo.DigitalWarrantyTrackerTest"/>
         </classes>
     </test>
 </suite>
