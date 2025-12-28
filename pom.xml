@@ -161,20 +161,21 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.1.2</version>
                 <configuration>
-                    <!-- Force TestNG provider -->
-                    <properties>
-                        <property>
-                            <name>surefire.testng.verbose</name>
-                            <value>10</value>
-                        </property>
-                    </properties>
-                    <!-- Include TestNG test patterns -->
+                    <!-- Configure for TestNG -->
+                    <suiteXmlFiles>
+                        <suiteXmlFile>testng.xml</suiteXmlFile>
+                    </suiteXmlFiles>
+                    <!-- Or use test classes directly -->
                     <includes>
                         <include>**/*Test.java</include>
                         <include>**/*Tests.java</include>
                     </includes>
-                    <!-- Force TestNG instead of JUnit -->
-                    <junitArtifactName>none</junitArtifactName>
+                    <!-- Disable JUnit -->
+                    <junitArtifactName>none:none</junitArtifactName>
+                    <!-- Minimal logging -->
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                    <trimStackTrace>false</trimStackTrace>
+                    <printSummary>false</printSummary>
                 </configuration>
                 <dependencies>
                     <!-- Add TestNG provider dependency -->
