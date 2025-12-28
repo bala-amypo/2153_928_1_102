@@ -10,6 +10,7 @@ public class JwtProperties {
     private String secret;
     private long expirationMs;
 
+    // Getter and Setter
     public String getSecret() {
         return secret;
     }
