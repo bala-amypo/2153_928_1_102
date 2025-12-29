@@ -14,12 +14,13 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    // ✅ PASSWORD ENCODER
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // ✅ USER DEFINITION
+    // ✅ IN-MEMORY USER (FOR TESTING / ADMIN ACCESS)
     @Bean
     public InMemoryUserDetailsManager userDetailsService(BCryptPasswordEncoder encoder) {
 
@@ -32,17 +33,25 @@ public class SecurityConfig {
         return new InMemoryUserDetailsManager(user);
     }
 
+    // ✅ SECURITY CONFIGURATION
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
+
+                // ✅ ALLOW REGISTER & LOGIN APIs
+                .requestMatchers("/auth/**").permitAll()
+
+                // ✅ ALLOW SWAGGER
                 .requestMatchers(
                     "/swagger-ui/**",
                     "/swagger-ui.html",
                     "/v3/api-docs/**"
                 ).permitAll()
+
+                // 🔒 ALL OTHER APIs NEED AUTHENTICATION
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form.permitAll())
