@@ -30,7 +30,7 @@ public class AlertScheduleController {
         return ResponseEntity.ok(created);
     }
     
-    // Remove: @Operation(summary = "Get all schedules for a warranty")
+    
     @GetMapping("/warranty/{warrantyId}")
     public ResponseEntity<List<AlertSchedule>> getSchedules(@PathVariable Long warrantyId) {
         List<AlertSchedule> schedules = scheduleService.getSchedules(warrantyId);
