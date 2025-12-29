@@ -1,9 +1,19 @@
 package com.example.demo.config;
 
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class SwaggerConfig {
-    // Remove the entire class or comment it out
-    // This class can be empty or deleted if you don't need Swagger
+
+    @Bean
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+                .info(new Info()
+                        .title("Demo Application API")
+                        .version("1.0")
+                        .description("Swagger documentation for Demo Spring Boot project"));
+    }
 }
