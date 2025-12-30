@@ -49,7 +49,7 @@ public class SecurityConfig {
 
                 // 🔐 PRODUCT API — ONLY ADMIN
                 .requestMatchers("/products/**")
-                .hasAuthority("ROLE_ADMIN")
+                .hasAuthority("ADMIN")
 
                 .anyRequest().authenticated()
             );
